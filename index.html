@@ -520,24 +520,20 @@
                         <label class="flex items-center gap-1 text-xs"><input type="checkbox" checked id="topBold" onchange="updateState('topBold', this.checked)"> Bold</label>
                         <label class="flex items-center gap-1 text-xs"><input type="checkbox" id="topItalic" onchange="updateState('topItalic', this.checked)"> Italic</label>
                         <label class="flex items-center gap-1 text-xs"><input type="checkbox" checked id="topUppercase" onchange="updateState('topUppercase', this.checked)"> Uppercase</label>
+                        <label class="flex items-center gap-1 text-xs"><input type="checkbox" checked id="topFollowShape" onchange="updateState('topFollowShape', this.checked)"> Ikuti bentuk stempel</label>
                     </div>
-                    <div class="mt-2"><label>Letter Spacing</label><input type="range" min="0" max="15" value="2" oninput="updateState('topLetterSpacing', +this.value)" id="topLetterSpacingSlider"></div>
+                    <div class="grid grid-cols-2 gap-2 mt-2">
+                        <div><label>Letter Spacing</label><input type="range" min="0" max="15" value="2" oninput="updateState('topLetterSpacing', +this.value)" id="topLetterSpacingSlider"></div>
+                        <div><label>Posisi Vertikal</label><input type="range" min="-80" max="80" value="0" oninput="updateState('topVerticalPos', +this.value)" id="topVerticalPosSlider"></div>
+                    </div>
                 </div>
 
                 <!-- Teks Tengah -->
                 <div class="card-panel">
                     <h3><i class="bi bi-building"></i> Teks Tengah</h3>
-                    <input type="text" id="centerText" value="UPT SD NEGERI" oninput="updateState('centerText', this.value)" placeholder="Nama Instansi...">
-                    <div class="grid grid-cols-2 gap-2 mt-2">
-                        <div><label>Font</label><select id="centerFontFamily" onchange="updateState('centerFontFamily', this.value)">
-                                <option>Arial</option><option>Times New Roman</option><option>Calibri</option><option>Verdana</option><option>Tahoma</option><option selected>Poppins</option><option>Roboto</option>
-                        </select></div>
-                        <div><label>Ukuran</label><input type="number" id="centerFontSize" value="20" min="8" max="50" onchange="updateState('centerFontSize', +this.value)"></div>
-                    </div>
-                    <div class="flex flex-wrap gap-3 mt-2">
-                        <label class="flex items-center gap-1 text-xs"><input type="checkbox" checked id="centerBold" onchange="updateState('centerBold', this.checked)"> Bold</label>
-                    </div>
-                    <div class="mt-2"><label>Posisi Vertikal</label><input type="range" min="-80" max="80" value="0" oninput="updateState('centerVerticalPos', +this.value)" id="centerVerticalPosSlider"></div>
+                    <p class="text-xs mb-2" style="color:var(--text-muted);">Tambah teks tengah satu per satu. Teks 1 = patokan posisi.</p>
+                    <div id="centerTextsContainer" class="space-y-2 max-h-[28rem] overflow-y-auto"></div>
+                    <button class="btn-accent btn-sm mt-2 w-full" onclick="addCenterText()">+ Tambah Teks Tengah</button>
                 </div>
 
                 <!-- Teks Bawah -->
@@ -550,7 +546,14 @@
                         </select></div>
                         <div><label>Ukuran</label><input type="number" id="bottomFontSize" value="22" min="8" max="50" onchange="updateState('bottomFontSize', +this.value)"></div>
                     </div>
-                    <div class="mt-2"><label>Spacing</label><input type="range" min="0" max="12" value="2" oninput="updateState('bottomSpacing', +this.value)" id="bottomSpacingSlider"></div>
+                    <div class="flex flex-wrap gap-3 mt-2">
+                        <label class="flex items-center gap-1 text-xs"><input type="checkbox" checked id="bottomBold" onchange="updateState('bottomBold', this.checked)"> Bold</label>
+                        <label class="flex items-center gap-1 text-xs"><input type="checkbox" checked id="bottomFollowShape" onchange="updateState('bottomFollowShape', this.checked)"> Ikuti bentuk stempel</label>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 mt-2">
+                        <div><label>Letter Spacing</label><input type="range" min="0" max="15" value="2" oninput="updateState('bottomSpacing', +this.value)" id="bottomSpacingSlider"></div>
+                        <div><label>Posisi Vertikal</label><input type="range" min="-80" max="80" value="0" oninput="updateState('bottomVerticalPos', +this.value)" id="bottomVerticalPosSlider"></div>
+                    </div>
                 </div>
 
                 <!-- Nomor Stempel -->
@@ -561,6 +564,10 @@
                     </div>
                     <input type="text" id="numberText" value="001/UPT-SD/2025" oninput="updateState('numberText', this.value)" placeholder="Nomor...">
                     <div class="mt-2"><label>Ukuran Font</label><input type="range" min="6" max="24" value="11" oninput="updateState('numberFontSize', +this.value)" id="numberFontSizeSlider"></div>
+                    <div class="grid grid-cols-2 gap-2 mt-2">
+                        <div><label>Letter Spacing</label><input type="range" min="0" max="15" value="0" oninput="updateState('numberLetterSpacing', +this.value)" id="numberLetterSpacingSlider"></div>
+                        <div><label>Posisi Vertikal</label><input type="range" min="-80" max="80" value="0" oninput="updateState('numberVerticalPos', +this.value)" id="numberVerticalPosSlider"></div>
+                    </div>
                 </div>
 
                 <!-- Logo -->
@@ -703,21 +710,33 @@
             topBold: true,
             topItalic: false,
             topUppercase: true,
+            topFollowShape: true,
             topLetterSpacing: 2,
-            centerText: 'UPT SD NEGERI',
-            centerFontFamily: 'Poppins',
-            centerFontSize: 20,
-            centerBold: true,
-            centerColor: '#cc0000',
-            centerVerticalPos: 0,
+            topVerticalPos: 0,
+            centerTexts: [
+                {
+                    text: 'UPT SD NEGERI',
+                    fontFamily: 'Poppins',
+                    fontSize: 20,
+                    bold: true,
+                    letterSpacing: 0,
+                    verticalPos: 0,
+                    spacing: 0,
+                    color: '#cc0000',
+                },
+            ],
             bottomText: 'MEDAN',
             bottomFontFamily: 'Arial',
             bottomFontSize: 22,
             bottomSpacing: 2,
+            bottomFollowShape: true,
+            bottomVerticalPos: 0,
             bottomBold: true,
             numberText: '001/UPT-SD/2025',
             showNumber: true,
             numberFontSize: 11,
+            numberLetterSpacing: 0,
+            numberVerticalPos: 0,
             logo: null,
             logoSize: 60,
             logoX: 0,
@@ -734,6 +753,8 @@
             rotation: 0,
             zoom: 1,
         };
+
+        const FONT_OPTIONS = ['Arial', 'Times New Roman', 'Calibri', 'Verdana', 'Tahoma', 'Poppins', 'Roboto'];
 
         let state = JSON.parse(JSON.stringify(defaultState));
         let history = [];
@@ -815,6 +836,8 @@
                         recalcLinesFromSpacing(1);
                     }
                     state.edges = migrateBordersToEdges(state);
+                    state.centerTexts = migrateCenterTexts(state);
+                    recalcCenterTextsFromSpacing(1);
                 }
             } catch (e) {
                 state = JSON.parse(JSON.stringify(defaultState));
@@ -855,7 +878,7 @@
             }
 
             if (st.topText.trim()) drawCurvedText(targetCtx, st.topText, halfW, halfH, st.shape, 'top', st);
-            if (st.centerText.trim()) drawCenterText(targetCtx, st.centerText, st.centerVerticalPos, st);
+            drawAllCenterTexts(targetCtx, st);
             if (st.bottomText.trim()) drawCurvedText(targetCtx, st.bottomText, halfW, halfH, st.shape, 'bottom', st);
             if (st.showNumber && st.numberText.trim()) drawNumberText(targetCtx, st.numberText, halfW, halfH, st);
             st.lines.forEach((line, i) => drawHorizontalLine(targetCtx, line, halfW, getLineDrawY(i)));
@@ -1014,9 +1037,236 @@
             });
         }
 
+        function drawSpacedText(ctx, text, centerX, y, letterSpacing) {
+            const chars = text.split('');
+            if (chars.length === 0) return;
+            if (!letterSpacing) {
+                ctx.fillText(text, centerX, y);
+                return;
+            }
+            const totalWidth = chars.reduce((sum, ch, i) => {
+                return sum + ctx.measureText(ch).width + (i < chars.length - 1 ? letterSpacing : 0);
+            }, 0);
+            let x = centerX - totalWidth / 2;
+            chars.forEach((ch, i) => {
+                const w = ctx.measureText(ch).width;
+                ctx.fillText(ch, x + w / 2, y);
+                x += w + (i < chars.length - 1 ? letterSpacing : 0);
+            });
+        }
+
+        function samplePolylinePath(points, segmentsPerEdge) {
+            const path = [];
+            for (let i = 0; i < points.length - 1; i++) {
+                const a = points[i];
+                const b = points[i + 1];
+                for (let s = 0; s < segmentsPerEdge; s++) {
+                    const t = s / segmentsPerEdge;
+                    path.push({
+                        x: a.x + (b.x - a.x) * t,
+                        y: a.y + (b.y - a.y) * t,
+                    });
+                }
+            }
+            path.push(points[points.length - 1]);
+            return path;
+        }
+
+        function sampleArcPath(cx, cy, rx, ry, startAngle, endAngle, segments) {
+            const path = [];
+            for (let i = 0; i <= segments; i++) {
+                const t = startAngle + ((endAngle - startAngle) * i) / segments;
+                path.push({ x: cx + rx * Math.cos(t), y: cy + ry * Math.sin(t) });
+            }
+            return path;
+        }
+
+        function buildPathMetrics(points) {
+            const segLens = [0];
+            let total = 0;
+            for (let i = 1; i < points.length; i++) {
+                const dx = points[i].x - points[i - 1].x;
+                const dy = points[i].y - points[i - 1].y;
+                total += Math.hypot(dx, dy);
+                segLens.push(total);
+            }
+            return { segLens, total };
+        }
+
+        function getPointOnPath(points, metrics, distance) {
+            const { segLens, total } = metrics;
+            if (points.length === 0) return { x: 0, y: 0, angle: 0 };
+            if (points.length === 1 || total === 0) return { x: points[0].x, y: points[0].y, angle: 0 };
+            const d = Math.max(0, Math.min(distance, total));
+            for (let i = 1; i < points.length; i++) {
+                if (d <= segLens[i]) {
+                    const prev = points[i - 1];
+                    const curr = points[i];
+                    const segLen = segLens[i] - segLens[i - 1] || 1;
+                    const t = (d - segLens[i - 1]) / segLen;
+                    const x = prev.x + (curr.x - prev.x) * t;
+                    const y = prev.y + (curr.y - prev.y) * t;
+                    const angle = Math.atan2(curr.y - prev.y, curr.x - prev.x);
+                    return { x, y, angle };
+                }
+            }
+            const last = points[points.length - 1];
+            const prev = points[points.length - 2];
+            return {
+                x: last.x,
+                y: last.y,
+                angle: Math.atan2(last.y - prev.y, last.x - prev.x),
+            };
+        }
+
+        function getShapeTextPathPoints(shape, halfW, halfH, cornerRadius, position, verticalPos) {
+            const isTop = position === 'top';
+            const minDim = Math.min(halfW, halfH);
+            const pad = minDim * 0.22 - (verticalPos || 0) * 0.35;
+            const scale = 0.78;
+
+            switch (shape) {
+                case 'circle': {
+                    const r = Math.max(24, minDim * scale - verticalPos);
+                    return isTop
+                        ? sampleArcPath(0, 0, r, r, -Math.PI, 0, 72)
+                        : sampleArcPath(0, 0, r, r, 0, Math.PI, 72);
+                }
+                case 'oval-h': {
+                    const rx = Math.max(24, halfW * scale - verticalPos * 0.35);
+                    const ry = Math.max(24, halfH * scale - verticalPos * 0.35);
+                    return isTop
+                        ? sampleArcPath(0, 0, rx, ry, -Math.PI, 0, 72)
+                        : sampleArcPath(0, 0, rx, ry, 0, Math.PI, 72);
+                }
+                case 'oval-v': {
+                    const rx = Math.max(24, halfH * scale - verticalPos * 0.35);
+                    const ry = Math.max(24, halfW * scale - verticalPos * 0.35);
+                    return isTop
+                        ? sampleArcPath(0, 0, rx, ry, -Math.PI, 0, 72)
+                        : sampleArcPath(0, 0, rx, ry, 0, Math.PI, 72);
+                }
+                case 'rect': {
+                    const y = isTop ? (-halfH + pad * 2) : (halfH - pad * 2);
+                    return samplePolylinePath([
+                        { x: -halfW + pad * 2, y },
+                        { x: halfW - pad * 2, y },
+                    ], 24);
+                }
+                case 'rect-wide': {
+                    const hh = halfH * 0.65;
+                    const y = isTop ? (-hh + pad * 2) : (hh - pad * 2);
+                    return samplePolylinePath([
+                        { x: -halfW + pad * 2, y },
+                        { x: halfW - pad * 2, y },
+                    ], 24);
+                }
+                case 'roundrect': {
+                    const rr = Math.min(cornerRadius, halfW, halfH);
+                    const y = isTop ? (-halfH + pad * 2) : (halfH - pad * 2);
+                    return samplePolylinePath([
+                        { x: -halfW + rr + pad, y },
+                        { x: halfW - rr - pad, y },
+                    ], 24);
+                }
+                case 'triangle': {
+                    const apexY = -halfH + pad * 2;
+                    const sideY = halfH * 0.15 + pad;
+                    if (isTop) {
+                        return samplePolylinePath([
+                            { x: -halfW + pad * 2, y: sideY },
+                            { x: 0, y: apexY },
+                            { x: halfW - pad * 2, y: sideY },
+                        ], 18);
+                    }
+                    return samplePolylinePath([
+                        { x: -halfW + pad * 2.5, y: halfH - pad * 2 },
+                        { x: halfW - pad * 2.5, y: halfH - pad * 2 },
+                    ], 24);
+                }
+                case 'hexagon': {
+                    const r = minDim * scale - verticalPos * 0.35;
+                    const verts = [];
+                    for (let i = 0; i < 6; i++) {
+                        const a = (Math.PI * 2 * i) / 6 - Math.PI / 2;
+                        verts.push({ x: r * Math.cos(a), y: r * Math.sin(a) });
+                    }
+                    if (isTop) {
+                        return samplePolylinePath([verts[5], verts[0], verts[1]], 16);
+                    }
+                    return samplePolylinePath([verts[2], verts[3], verts[4]], 16);
+                }
+                default: {
+                    const r = Math.max(24, minDim * scale - verticalPos);
+                    return isTop
+                        ? sampleArcPath(0, 0, r, r, -Math.PI, 0, 72)
+                        : sampleArcPath(0, 0, r, r, 0, Math.PI, 72);
+                }
+            }
+        }
+
+        function isPathMostlyHorizontal(points) {
+            if (points.length < 2) return false;
+            const dx = Math.abs(points[points.length - 1].x - points[0].x);
+            const dy = Math.abs(points[points.length - 1].y - points[0].y);
+            return dx > 20 && dy < dx * 0.2;
+        }
+
+        function drawTextOnShapePath(ctx, chars, points, letterSpacing, isTop) {
+            if (!chars.length || !points.length) return;
+            const flat = isPathMostlyHorizontal(points);
+            const metrics = buildPathMetrics(points);
+            const totalTextWidth = chars.reduce((sum, ch, i) => {
+                return sum + ctx.measureText(ch).width + (i < chars.length - 1 ? letterSpacing : 0);
+            }, 0);
+            const usable = Math.max(metrics.total * 0.98, 1);
+            const startDist = Math.max(0, (usable - totalTextWidth) / 2);
+            let dist = startDist;
+
+            chars.forEach((ch, i) => {
+                const charWidth = ctx.measureText(ch).width;
+                dist += charWidth / 2;
+                const { x, y, angle } = getPointOnPath(points, metrics, dist);
+                ctx.save();
+                if (flat) {
+                    ctx.fillText(ch, x, y);
+                } else {
+                    ctx.translate(x, y);
+                    const rot = isTop ? angle + Math.PI / 2 : angle - Math.PI / 2;
+                    ctx.rotate(rot);
+                    ctx.fillText(ch, 0, 0);
+                }
+                ctx.restore();
+                dist += charWidth / 2 + (i < chars.length - 1 ? letterSpacing : 0);
+            });
+        }
+
+        function drawCircularArcText(ctx, chars, radius, letterSpacing, isTop) {
+            const totalWidth = chars.reduce((sum, ch) => sum + ctx.measureText(ch).width + letterSpacing, 0);
+            const totalAngle = Math.min(Math.PI * 1.45, totalWidth / radius);
+            const startAngle = isTop ? (-Math.PI / 2 - totalAngle / 2) : (Math.PI / 2 + totalAngle / 2);
+            const direction = isTop ? 1 : -1;
+            let currentAngle = startAngle;
+
+            for (let i = 0; i < chars.length; i++) {
+                const charWidth = ctx.measureText(chars[i]).width;
+                const charAngle = ((charWidth + letterSpacing) / radius) * direction;
+                const midAngle = currentAngle + charAngle / 2;
+                const x = Math.cos(midAngle) * radius;
+                const y = Math.sin(midAngle) * radius;
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.rotate(isTop ? midAngle + Math.PI / 2 : midAngle - Math.PI / 2);
+                ctx.fillText(chars[i], 0, 0);
+                ctx.restore();
+                currentAngle += charAngle;
+            }
+        }
+
         function drawCurvedText(ctx, text, halfW, halfH, shape, position, st) {
             const isTop = position === 'top';
-            const radius = Math.min(halfW, halfH) * 0.78;
+            const verticalPos = isTop ? (st.topVerticalPos || 0) : (st.bottomVerticalPos || 0);
+            const followShape = isTop ? st.topFollowShape !== false : st.bottomFollowShape !== false;
 
             let processedText = text;
             if (isTop && st.topUppercase) processedText = processedText.toUpperCase();
@@ -1038,46 +1288,121 @@
             ctx.textBaseline = 'middle';
 
             const chars = processedText.split('');
-            const totalWidth = chars.reduce((sum, ch) => sum + ctx.measureText(ch).width + letterSpacing, 0);
-            const totalAngle = Math.min(Math.PI * 1.45, totalWidth / radius);
-            const startAngle = isTop ? (-Math.PI / 2 - totalAngle / 2) : (Math.PI / 2 + totalAngle / 2);
-            const direction = isTop ? 1 : -1;
-
-            let currentAngle = startAngle;
-            for (let i = 0; i < chars.length; i++) {
-                const charWidth = ctx.measureText(chars[i]).width;
-                const charAngle = (charWidth + letterSpacing) / radius * direction;
-                const midAngle = currentAngle + charAngle / 2;
-                const x = Math.cos(midAngle) * radius;
-                const y = Math.sin(midAngle) * radius;
-                ctx.save();
-                ctx.translate(x, y);
-                const rotAngle = isTop ? (midAngle + Math.PI / 2) : (midAngle - Math.PI / 2);
-                ctx.rotate(rotAngle);
-                ctx.fillText(chars[i], 0, 0);
+            if (!chars.length) {
                 ctx.restore();
-                currentAngle += charAngle;
+                return;
+            }
+
+            if (followShape) {
+                const pathPoints = getShapeTextPathPoints(shape, halfW, halfH, st.cornerRadius, position, verticalPos);
+                drawTextOnShapePath(ctx, chars, pathPoints, letterSpacing, isTop);
+            } else {
+                const radius = Math.max(24, Math.min(halfW, halfH) * 0.78 - verticalPos);
+                drawCircularArcText(ctx, chars, radius, letterSpacing, isTop);
             }
             ctx.restore();
         }
 
-        function drawCenterText(ctx, text, verticalOffset, st) {
+        function normalizeCenterTexts(items, st) {
+            if (!Array.isArray(items) || items.length === 0) {
+                return migrateCenterTexts(st || state);
+            }
+            const fallbackColor = st?.textColor || state.textColor || '#cc0000';
+            return items.map((item, i) => ({
+                text: item.text ?? '',
+                fontFamily: item.fontFamily || 'Poppins',
+                fontSize: Number(item.fontSize ?? 20),
+                bold: item.bold !== false,
+                letterSpacing: Number(item.letterSpacing ?? 0),
+                verticalPos: Number(item.verticalPos ?? 0),
+                spacing: item.spacing != null ? Number(item.spacing) : (i === 0 ? 0 : 8),
+                color: item.color || fallbackColor,
+            }));
+        }
+
+        function migrateCenterTexts(st) {
+            if (Array.isArray(st.centerTexts) && st.centerTexts.length > 0) {
+                return normalizeCenterTexts(st.centerTexts, st);
+            }
+            if (st.centerText) {
+                return [{
+                    text: st.centerText,
+                    fontFamily: st.centerFontFamily || 'Poppins',
+                    fontSize: Number(st.centerFontSize ?? 20),
+                    bold: st.centerBold !== false,
+                    letterSpacing: Number(st.centerLetterSpacing ?? 0),
+                    verticalPos: Number(st.centerVerticalPos ?? 0),
+                    spacing: 0,
+                    color: st.centerColor || st.textColor || '#cc0000',
+                }];
+            }
+            return normalizeCenterTexts(defaultState.centerTexts, st);
+        }
+
+        function getCenterTextBlockHeight(item) {
+            const lines = String(item.text || '').split('\n').filter((line) => line.trim());
+            const count = Math.max(1, lines.length);
+            return count * item.fontSize * 1.3;
+        }
+
+        function getCenterTextDrawY(index, items) {
+            const list = items || state.centerTexts || [];
+            const item = list[index];
+            if (!item) return 0;
+            if (index === 0) return item.verticalPos || 0;
+            const prev = list[index - 1];
+            const gap = item.spacing != null ? item.spacing : 8;
+            return getCenterTextDrawY(index - 1, list) + getCenterTextBlockHeight(prev) / 2 + gap + getCenterTextBlockHeight(item) / 2;
+        }
+
+        function syncCenterTextYFromSpacing(index) {
+            if (index <= 0 || !state.centerTexts[index]) return;
+            const prev = state.centerTexts[index - 1];
+            const cur = state.centerTexts[index];
+            const gap = cur.spacing != null ? cur.spacing : 8;
+            cur.verticalPos = getCenterTextDrawY(index - 1) + getCenterTextBlockHeight(prev) / 2 + gap + getCenterTextBlockHeight(cur) / 2;
+        }
+
+        function syncCenterTextSpacingFromY(index) {
+            if (index <= 0 || !state.centerTexts[index]) return;
+            const prev = state.centerTexts[index - 1];
+            const cur = state.centerTexts[index];
+            const gap = (cur.verticalPos || 0) - getCenterTextDrawY(index - 1) - getCenterTextBlockHeight(prev) / 2 - getCenterTextBlockHeight(cur) / 2;
+            cur.spacing = Math.max(0, Math.round(gap));
+        }
+
+        function recalcCenterTextsFromSpacing(startIndex) {
+            for (let i = Math.max(1, startIndex); i < state.centerTexts.length; i++) {
+                syncCenterTextYFromSpacing(i);
+            }
+        }
+
+        function drawAllCenterTexts(ctx, st) {
+            const items = st.centerTexts && st.centerTexts.length ? st.centerTexts : migrateCenterTexts(st);
+            items.forEach((item, index) => {
+                if (!String(item.text || '').trim()) return;
+                drawCenterTextBlock(ctx, item, getCenterTextDrawY(index, items), st);
+            });
+        }
+
+        function drawCenterTextBlock(ctx, item, drawY, st) {
             ctx.save();
             let fontStr = '';
-            if (st.centerBold) fontStr += 'bold ';
-            fontStr += st.centerFontSize + 'px ' + st.centerFontFamily + ', sans-serif';
-            ctx.fillStyle = st.centerColor || st.textColor;
+            if (item.bold) fontStr += 'bold ';
+            fontStr += item.fontSize + 'px ' + item.fontFamily + ', sans-serif';
+            ctx.fillStyle = item.color || st.textColor;
             ctx.font = fontStr;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
 
-            const lines = text.split('\n');
-            const lineHeight = st.centerFontSize * 1.3;
+            const lines = String(item.text).split('\n');
+            const lineHeight = item.fontSize * 1.3;
             const totalHeight = lines.length * lineHeight;
-            const startY = verticalOffset - totalHeight / 2 + lineHeight / 2;
+            const startY = drawY - totalHeight / 2 + lineHeight / 2;
+            const letterSpacing = item.letterSpacing || 0;
 
             lines.forEach((line, i) => {
-                ctx.fillText(line.trim(), 0, startY + i * lineHeight);
+                drawSpacedText(ctx, line.trim(), 0, startY + i * lineHeight, letterSpacing);
             });
             ctx.restore();
         }
@@ -1089,8 +1414,8 @@
             ctx.font = fontSize + 'px Arial, sans-serif';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            const y = Math.min(halfW, halfH) * 0.65;
-            ctx.fillText(text, 0, y);
+            const y = Math.min(halfW, halfH) * 0.65 + (st.numberVerticalPos || 0);
+            drawSpacedText(ctx, text, 0, y, st.numberLetterSpacing || 0);
             ctx.restore();
         }
 
@@ -1249,19 +1574,21 @@
                 topBold: 'topBold',
                 topItalic: 'topItalic',
                 topUppercase: 'topUppercase',
+                topFollowShape: 'topFollowShape',
                 topLetterSpacingSlider: 'topLetterSpacing',
-                centerText: 'centerText',
-                centerFontFamily: 'centerFontFamily',
-                centerFontSize: 'centerFontSize',
-                centerBold: 'centerBold',
-                centerVerticalPosSlider: 'centerVerticalPos',
+                topVerticalPosSlider: 'topVerticalPos',
                 bottomText: 'bottomText',
                 bottomFontFamily: 'bottomFontFamily',
                 bottomFontSize: 'bottomFontSize',
+                bottomBold: 'bottomBold',
+                bottomFollowShape: 'bottomFollowShape',
                 bottomSpacingSlider: 'bottomSpacing',
+                bottomVerticalPosSlider: 'bottomVerticalPos',
                 showNumber: 'showNumber',
                 numberText: 'numberText',
                 numberFontSizeSlider: 'numberFontSize',
+                numberLetterSpacingSlider: 'numberLetterSpacing',
+                numberVerticalPosSlider: 'numberVerticalPos',
                 logoSizeSlider: 'logoSize',
                 logoRotationSlider: 'logoRotation',
                 logoXSlider: 'logoX',
@@ -1289,6 +1616,7 @@
             document.getElementById('ornamentSpacingValue').textContent = (state.ornamentSpacing ?? 0) + 'px';
             renderLinesUI();
             renderEdgesUI();
+            renderCenterTextsUI();
         }
 
         const edgeDragSaved = {};
@@ -1382,6 +1710,200 @@
             saveState();
             state.edges.splice(index, 1);
             renderEdgesUI();
+            renderCanvas();
+            saveToLocalStorage();
+        }
+
+        const centerTextDragSaved = {};
+
+        function renderCenterTextsUI() {
+            const container = document.getElementById('centerTextsContainer');
+            if (!container) return;
+            const items = state.centerTexts || [];
+
+            container.innerHTML = items.map((item, i) => `
+            <div class="text-xs p-3 rounded-lg space-y-2" style="background:var(--input-bg); border:1px solid var(--border);">
+              <div class="flex items-center justify-between gap-2">
+                <span class="font-semibold" style="color:var(--text);">Teks ${i + 1}${i === 0 ? ' (patokan)' : ''}</span>
+                <div class="flex gap-1">
+                  <input type="color" value="${item.color || '#cc0000'}" class="w-7 h-7 p-0 border-0 rounded" title="Warna"
+                    onchange="commitCenterText(${i},'color',this.value)">
+                  <button class="btn-outline btn-sm px-2 py-1" onclick="duplicateCenterText(${i})" title="Duplikat"><i class="bi bi-copy"></i></button>
+                  ${items.length > 1 ? `<button class="btn-outline btn-sm px-2 py-1" onclick="removeCenterText(${i})" title="Hapus" style="color:#ef4444;border-color:#ef4444;"><i class="bi bi-trash"></i></button>` : ''}
+                </div>
+              </div>
+              <div>
+                <label class="block mb-1">Isi teks</label>
+                <textarea rows="2" class="w-full !py-1.5" placeholder="Nama instansi..."
+                  oninput="previewCenterText(${i},'text',this.value)"
+                  onchange="commitCenterText(${i},'text',this.value)">${(item.text || '').replace(/</g, '&lt;')}</textarea>
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="block mb-1">Font</label>
+                  <select class="!py-1.5" onchange="commitCenterText(${i},'fontFamily',this.value)">
+                    ${FONT_OPTIONS.map((font) => `<option value="${font}" ${item.fontFamily === font ? 'selected' : ''}>${font}</option>`).join('')}
+                  </select>
+                </div>
+                <div>
+                  <label class="block mb-1">Ukuran</label>
+                  <input type="number" min="8" max="50" value="${item.fontSize ?? 20}" class="!py-1.5"
+                    onchange="commitCenterText(${i},'fontSize',+this.value)">
+                </div>
+              </div>
+              <label class="flex items-center gap-1 text-xs">
+                <input type="checkbox" ${item.bold ? 'checked' : ''} onchange="commitCenterText(${i},'bold',this.checked)"> Bold
+              </label>
+              <div>
+                <label class="flex justify-between gap-2 mb-1">
+                  <span>${i === 0 ? 'Posisi vertikal (patokan)' : 'Posisi vertikal'}</span>
+                  <span id="centerYLabel${i}" style="color:var(--accent);">${Math.round(getCenterTextDrawY(i))}px</span>
+                </label>
+                <input type="range" class="w-full" min="-80" max="80" value="${Math.round(getCenterTextDrawY(i))}"
+                  oninput="previewCenterTextY(${i},+this.value); document.getElementById('centerYLabel${i}').textContent=Math.round(getCenterTextDrawY(${i}))+'px'"
+                  onchange="commitCenterTextY(${i},+this.value)">
+              </div>
+              ${i > 0 ? `
+              <div>
+                <label class="flex justify-between gap-2 mb-1">
+                  <span>Jarak dari teks sebelumnya</span>
+                  <span id="centerGapLabel${i}" style="color:var(--accent);">${item.spacing ?? 8}px</span>
+                </label>
+                <input type="range" class="w-full" min="0" max="60" value="${item.spacing ?? 8}"
+                  oninput="previewCenterTextSpacing(${i},+this.value); document.getElementById('centerGapLabel${i}').textContent=this.value+'px'"
+                  onchange="commitCenterTextSpacing(${i},+this.value)">
+              </div>
+              ` : ''}
+              <div>
+                <label class="flex justify-between gap-2 mb-1">
+                  <span>Letter Spacing</span>
+                  <span id="centerLetterLabel${i}" style="color:var(--accent);">${item.letterSpacing ?? 0}px</span>
+                </label>
+                <input type="range" class="w-full" min="0" max="15" value="${item.letterSpacing ?? 0}"
+                  oninput="previewCenterText(${i},'letterSpacing',+this.value); document.getElementById('centerLetterLabel${i}').textContent=this.value+'px'"
+                  onchange="commitCenterText(${i},'letterSpacing',+this.value)">
+              </div>
+            </div>
+          `).join('');
+        }
+
+        function previewCenterText(index, key, value) {
+            if (!state.centerTexts[index]) return;
+            const dragId = 'center-' + index + '-' + key;
+            if (!centerTextDragSaved[dragId]) {
+                saveState();
+                centerTextDragSaved[dragId] = true;
+            }
+            state.centerTexts[index][key] = value;
+            if (key === 'fontSize') recalcCenterTextsFromSpacing(index);
+            renderCanvas();
+        }
+
+        function commitCenterText(index, key, value) {
+            if (!state.centerTexts[index]) return;
+            const dragId = 'center-' + index + '-' + key;
+            if (!centerTextDragSaved[dragId]) saveState();
+            delete centerTextDragSaved[dragId];
+            state.centerTexts[index][key] = value;
+            if (key === 'fontSize') recalcCenterTextsFromSpacing(index);
+            renderCenterTextsUI();
+            renderCanvas();
+            saveToLocalStorage();
+        }
+
+        function previewCenterTextY(index, y) {
+            if (!state.centerTexts[index]) return;
+            const dragId = 'center-' + index + '-y';
+            if (!centerTextDragSaved[dragId]) {
+                saveState();
+                centerTextDragSaved[dragId] = true;
+            }
+            state.centerTexts[index].verticalPos = y;
+            if (index === 0) recalcCenterTextsFromSpacing(1);
+            else syncCenterTextSpacingFromY(index);
+            renderCanvas();
+        }
+
+        function commitCenterTextY(index, y) {
+            if (!state.centerTexts[index]) return;
+            const dragId = 'center-' + index + '-y';
+            if (!centerTextDragSaved[dragId]) saveState();
+            delete centerTextDragSaved[dragId];
+            state.centerTexts[index].verticalPos = y;
+            if (index === 0) recalcCenterTextsFromSpacing(1);
+            else syncCenterTextSpacingFromY(index);
+            renderCenterTextsUI();
+            renderCanvas();
+            saveToLocalStorage();
+        }
+
+        function previewCenterTextSpacing(index, spacing) {
+            if (index <= 0 || !state.centerTexts[index]) return;
+            const dragId = 'center-' + index + '-spacing';
+            if (!centerTextDragSaved[dragId]) {
+                saveState();
+                centerTextDragSaved[dragId] = true;
+            }
+            state.centerTexts[index].spacing = spacing;
+            syncCenterTextYFromSpacing(index);
+            recalcCenterTextsFromSpacing(index + 1);
+            renderCanvas();
+        }
+
+        function commitCenterTextSpacing(index, spacing) {
+            if (index <= 0 || !state.centerTexts[index]) return;
+            const dragId = 'center-' + index + '-spacing';
+            if (!centerTextDragSaved[dragId]) saveState();
+            delete centerTextDragSaved[dragId];
+            state.centerTexts[index].spacing = spacing;
+            syncCenterTextYFromSpacing(index);
+            recalcCenterTextsFromSpacing(index + 1);
+            renderCenterTextsUI();
+            renderCanvas();
+            saveToLocalStorage();
+        }
+
+        function addCenterText() {
+            saveState();
+            if (!state.centerTexts) state.centerTexts = [];
+            const isFirst = state.centerTexts.length === 0;
+            state.centerTexts.push({
+                text: 'TEKS TENGAH',
+                fontFamily: 'Poppins',
+                fontSize: 18,
+                bold: true,
+                letterSpacing: 0,
+                verticalPos: 0,
+                spacing: isFirst ? 0 : 8,
+                color: state.textColor,
+            });
+            if (!isFirst) syncCenterTextYFromSpacing(state.centerTexts.length - 1);
+            renderCenterTextsUI();
+            renderCanvas();
+            saveToLocalStorage();
+            showToast('✅ Teks tengah ditambahkan');
+        }
+
+        function removeCenterText(index) {
+            if (!state.centerTexts || state.centerTexts.length <= 1) {
+                showToast('❌ Minimal harus ada 1 teks tengah', true);
+                return;
+            }
+            saveState();
+            state.centerTexts.splice(index, 1);
+            renderCenterTextsUI();
+            renderCanvas();
+            saveToLocalStorage();
+        }
+
+        function duplicateCenterText(index) {
+            saveState();
+            const copy = JSON.parse(JSON.stringify(state.centerTexts[index]));
+            copy.text = (copy.text || '') + ' (copy)';
+            if (copy.spacing == null) copy.spacing = 8;
+            state.centerTexts.splice(index + 1, 0, copy);
+            recalcCenterTextsFromSpacing(index + 1);
+            renderCenterTextsUI();
             renderCanvas();
             saveToLocalStorage();
         }
@@ -1762,6 +2284,7 @@
                         recalcLinesFromSpacing(1);
                     }
                     state.edges = migrateBordersToEdges(state);
+                    state.centerTexts = migrateCenterTexts(state);
                     syncUIFromState();
                     renderCanvas();
                     saveToLocalStorage();
@@ -1899,11 +2422,16 @@
                 state.logo = null;
                 state.lines = [];
                 state.edges = migrateBordersToEdges(state);
+                state.centerTexts = migrateCenterTexts(state);
                 if (state.edges[0]) {
                     state.edges[0].color = tmpl.outerBorderColor || tmpl.textColor || state.edges[0].color;
                 }
                 if (state.edges[1]) {
                     state.edges[1].color = tmpl.innerBorderColor || tmpl.textColor || state.edges[1].color;
+                }
+                if (tmpl.centerText && state.centerTexts[0]) {
+                    state.centerTexts[0].text = tmpl.centerText;
+                    if (tmpl.textColor) state.centerTexts[0].color = tmpl.textColor;
                 }
                 syncUIFromState();
                 renderCanvas();
@@ -1932,9 +2460,11 @@
             state.innerBorderColor = color;
             state.textColor = color;
             state.logoColor = color;
-            state.centerColor = color;
             if (state.edges) {
                 state.edges = state.edges.map((edge) => ({ ...edge, color }));
+            }
+            if (state.centerTexts) {
+                state.centerTexts = state.centerTexts.map((item) => ({ ...item, color }));
             }
             syncUIFromState();
             renderCanvas();
@@ -2032,7 +2562,9 @@
             document.getElementById('ornamentRadiusValue').textContent = (state.ornamentRadius ?? 72) + '%';
             document.getElementById('ornamentSpacingValue').textContent = (state.ornamentSpacing ?? 0) + 'px';
             state.edges = migrateBordersToEdges(state);
+            state.centerTexts = migrateCenterTexts(state);
             renderEdgesUI();
+            renderCenterTextsUI();
 
             // Keyboard shortcuts
             document.addEventListener('keydown', (e) => {
