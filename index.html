@@ -1,0 +1,2077 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator Stempel Profesional</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'poppins': ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        sidebar: '#1e293b',
+                        bg: '#0f172a',
+                        card: '#334155',
+                        accent: '#3b82f6',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --sidebar-bg: #1e293b;
+            --main-bg: #0f172a;
+            --card-bg: #334155;
+            --accent: #3b82f6;
+            --text: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border: #475569;
+            --input-bg: #1e293b;
+            --hover: #3b82f6;
+            --canvas-bg: #f8fafc;
+        }
+
+        .light {
+            --sidebar-bg: #ffffff;
+            --main-bg: #f1f5f9;
+            --card-bg: #ffffff;
+            --accent: #3b82f6;
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --border: #cbd5e1;
+            --input-bg: #f8fafc;
+            --hover: #2563eb;
+            --canvas-bg: #ffffff;
+        }
+
+        * {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--main-bg);
+            color: var(--text);
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        .sidebar {
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border);
+            width: 370px;
+            min-width: 370px;
+            height: 100vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            position: relative;
+            z-index: 30;
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+            min-width: 0;
+            width: 0;
+        }
+
+        .canvas-area {
+            flex: 1;
+            background: var(--main-bg);
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            position: relative;
+            height: 100vh;
+            overflow: auto;
+            padding: 24px;
+        }
+
+        .canvas-wrapper {
+            background: var(--canvas-bg);
+            border-radius: 16px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            position: sticky;
+            top: 24px;
+        }
+
+        canvas {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            image-rendering: auto;
+        }
+
+        /* Scrollbar */
+        .sidebar::-webkit-scrollbar {
+            width: 5px;
+        }
+        .sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .sidebar::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 10px;
+        }
+
+        /* Custom input styles */
+        input[type="range"] {
+            -webkit-appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--border);
+            outline: none;
+            cursor: pointer;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.15s ease;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+
+        input[type="number"],
+        input[type="text"],
+        select {
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 13px;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+        input[type="number"]:focus,
+        input[type="text"]:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+        input[type="color"] {
+            -webkit-appearance: none;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            width: 40px;
+            height: 34px;
+            cursor: pointer;
+            background: transparent;
+            padding: 2px;
+        }
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+        input[type="color"]::-webkit-color-swatch {
+            border-radius: 5px;
+            border: none;
+        }
+        input[type="checkbox"] {
+            accent-color: var(--accent);
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .btn-accent {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-family: 'Poppins', sans-serif;
+            font-size: 13px;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        .btn-accent:hover {
+            opacity: 0.85;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.35);
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 7px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-family: 'Poppins', sans-serif;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+        .btn-outline:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(59, 130, 246, 0.05);
+        }
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 11px;
+            border-radius: 6px;
+        }
+
+        .card-panel {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 10px;
+        }
+        .card-panel h3 {
+            font-size: 13px;
+            font-weight: 600;
+            margin: 0 0 10px 0;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .card-panel label {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-muted);
+            display: block;
+            margin-bottom: 3px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tab-btn {
+            padding: 7px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            background: transparent;
+            color: var(--text-muted);
+            font-weight: 500;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        .tab-btn.active {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+        .tab-btn:hover:not(.active) {
+            border-color: var(--border);
+            color: var(--text);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #10b981;
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            z-index: 9999;
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .toast.error {
+            background: #ef4444;
+            box-shadow: 0 10px 30px rgba(239, 68, 68, 0.4);
+        }
+
+        /* Drag & drop zone */
+        .drop-zone {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--input-bg);
+        }
+        .drop-zone:hover,
+        .drop-zone.drag-over {
+            border-color: var(--accent);
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        /* Mobile toggle */
+        .mobile-toggle {
+            display: none;
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 40;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            align-items: center;
+            justify-content: center;
+        }
+
+        @media (max-width: 900px) {
+            .sidebar {
+                position: fixed;
+                left: 0;
+                top: 0;
+                width: 340px;
+                min-width: 340px;
+                height: 100vh;
+                z-index: 35;
+                transform: translateX(-100%);
+                box-shadow: 5px 0 30px rgba(0, 0, 0, 0.5);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .sidebar.collapsed {
+                transform: translateX(-100%);
+                width: 340px;
+                min-width: 340px;
+            }
+            .mobile-toggle {
+                display: flex;
+            }
+            .canvas-area {
+                padding-top: 76px;
+                height: 100vh;
+            }
+            .canvas-wrapper {
+                padding: 15px;
+                margin: 10px;
+                top: 76px;
+            }
+        }
+    </style>
+</head>
+<body class="dark">
+
+    <!-- Mobile Toggle -->
+    <button class="mobile-toggle" id="mobileToggle" title="Toggle Sidebar">
+        <i class="bi bi-list"></i>
+    </button>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Main Layout -->
+    <div class="flex" style="height:100vh;">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="p-4 sticky top-0 z-10" style="background:var(--sidebar-bg); border-bottom:1px solid var(--border);">
+                <div class="flex items-center justify-between mb-3">
+                    <h2 class="text-lg font-bold flex items-center gap-2" style="color:var(--text);">
+                        <i class="bi bi-stars" style="color:var(--accent);"></i> Stempel Pro
+                    </h2>
+                    <div class="flex gap-2">
+                        <button class="btn-outline btn-sm" onclick="toggleDarkMode()" title="Toggle Dark/Light Mode">
+                            <i class="bi bi-moon-stars"></i>
+                        </button>
+                        <button class="btn-outline btn-sm" onclick="toggleSidebar()" title="Close Sidebar">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- Quick Templates -->
+                <div class="flex flex-wrap gap-1.5">
+                    <select id="templateSelect" onchange="loadTemplate(this.value)" class="text-xs py-2" style="flex:1;min-width:120px;">
+                        <option value="">📋 Template Cepat...</option>
+                        <option value="pemerintah">🏛️ Instansi Pemerintah</option>
+                        <option value="sekolah">🏫 Sekolah</option>
+                        <option value="madrasah">📚 Madrasah</option>
+                        <option value="kelurahan">🏘️ Kelurahan</option>
+                        <option value="desa">🌾 Desa</option>
+                        <option value="organisasi">🤝 Organisasi</option>
+                        <option value="koperasi">🏪 Koperasi</option>
+                        <option value="masjid">🕌 Masjid</option>
+                        <option value="perusahaan">🏢 Perusahaan</option>
+                        <option value="klinik">🏥 Klinik</option>
+                        <option value="notaris">⚖️ Notaris</option>
+                    </select>
+                    <button class="btn-accent btn-sm" onclick="resetAll()" title="Reset">
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                    </button>
+                </div>
+                <!-- Undo/Redo -->
+                <div class="flex gap-2 mt-2">
+                    <button class="btn-outline btn-sm flex-1" onclick="undo()" title="Undo"><i class="bi bi-arrow-90deg-left"></i> Undo</button>
+                    <button class="btn-outline btn-sm flex-1" onclick="redo()" title="Redo">Redo <i class="bi bi-arrow-90deg-right"></i></button>
+                </div>
+            </div>
+
+            <!-- Scrollable Settings -->
+            <div class="px-4 pb-6 space-y-2" id="settingsContainer">
+                <!-- Bentuk & Ukuran -->
+                <div class="card-panel">
+                    <h3><i class="bi bi-bounding-box"></i> Bentuk & Ukuran</h3>
+                    <label>Bentuk Stempel</label>
+                    <select id="shapeSelect" onchange="updateState('shape', this.value)">
+                        <option value="circle">⚪ Lingkaran</option>
+                        <option value="oval-h">🔵 Oval Horizontal</option>
+                        <option value="oval-v">🔴 Oval Vertikal</option>
+                        <option value="rect">⬜ Persegi</option>
+                        <option value="rect-wide">▬ Persegi Panjang</option>
+                        <option value="roundrect">🔲 Persegi Membulat</option>
+                        <option value="triangle">🔺 Segitiga</option>
+                        <option value="hexagon">⬡ Segi Enam</option>
+                    </select>
+                    <div class="grid grid-cols-2 gap-2 mt-2">
+                        <div><label>Lebar (px)</label><input type="number" id="widthInput" value="400" min="100" max="1200" onchange="updateState('width', +this.value)"></div>
+                        <div><label>Tinggi (px)</label><input type="number" id="heightInput" value="400" min="100" max="1200" onchange="updateState('height', +this.value)"></div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 mt-2">
+                        <div><label>Ketebalan Garis</label><input type="range" min="1" max="20" value="4" oninput="updateState('borderThickness', +this.value)" id="borderThicknessSlider"></div>
+                        <div><label>Radius Sudut</label><input type="range" min="0" max="100" value="25" oninput="updateState('cornerRadius', +this.value)" id="cornerRadiusSlider"></div>
+                    </div>
+                </div>
+
+                <!-- Warna -->
+                <div class="card-panel">
+                    <h3><i class="bi bi-palette"></i> Warna</h3>
+                    <div class="grid grid-cols-3 gap-2">
+                        <div><label>Garis Luar</label><input type="color" id="outerBorderColor" value="#cc0000" onchange="updateState('outerBorderColor', this.value)"></div>
+                        <div><label>Garis Dalam</label><input type="color" id="innerBorderColor" value="#cc0000" onchange="updateState('innerBorderColor', this.value)"></div>
+                        <div><label>Teks</label><input type="color" id="textColor" value="#cc0000" onchange="updateState('textColor', this.value)"></div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 mt-2">
+                        <div><label>Logo</label><input type="color" id="logoColor" value="#cc0000" onchange="updateState('logoColor', this.value)"></div>
+                        <div><label>Background</label><input type="color" id="bgColor" value="#ffffff" onchange="updateState('bgColor', this.value)"></div>
+                    </div>
+                    <div class="flex flex-wrap gap-1.5 mt-2">
+                        <span class="text-xs" style="color:var(--text-muted);">Preset:</span>
+                        <button class="btn-sm btn-outline" style="background:#cc0000;color:#fff;border-color:#cc0000;" onclick="setPresetColor('#cc0000')">Merah</button>
+                        <button class="btn-sm btn-outline" style="background:#1a56db;color:#fff;border-color:#1a56db;" onclick="setPresetColor('#1a56db')">Biru</button>
+                        <button class="btn-sm btn-outline" style="background:#111;color:#fff;border-color:#111;" onclick="setPresetColor('#111111')">Hitam</button>
+                        <button class="btn-sm btn-outline" style="background:#059669;color:#fff;border-color:#059669;" onclick="setPresetColor('#059669')">Hijau</button>
+                        <button class="btn-sm btn-outline" style="background:#7c3aed;color:#fff;border-color:#7c3aed;" onclick="setPresetColor('#7c3aed')">Ungu</button>
+                    </div>
+                </div>
+
+                <!-- Garis Tepi -->
+                <div class="card-panel">
+                    <h3><i class="bi bi-border-outer"></i> Garis Tepi</h3>
+                    <p class="text-xs mb-2" style="color:var(--text-muted);">Tambah garis tepi satu per satu. Garis pertama = tepi luar.</p>
+                    <div id="edgesContainer" class="space-y-2 max-h-[28rem] overflow-y-auto"></div>
+                    <button class="btn-accent btn-sm mt-2 w-full" onclick="addEdgeRing()">+ Tambah Garis Tepi</button>
+                </div>
+
+                <!-- Teks Atas -->
+                <div class="card-panel">
+                    <h3><i class="bi bi-text-paragraph"></i> Teks Atas (Melengkung)</h3>
+                    <input type="text" id="topText" value="PEMERINTAH KOTA" oninput="updateState('topText', this.value)" placeholder="Teks Atas...">
+                    <div class="grid grid-cols-2 gap-2 mt-2">
+                        <div><label>Font</label><select id="topFontFamily" onchange="updateState('topFontFamily', this.value)">
+                                <option>Arial</option><option>Times New Roman</option><option>Calibri</option><option>Verdana</option><option>Tahoma</option><option>Poppins</option><option>Roboto</option>
+                        </select></div>
+                        <div><label>Ukuran</label><input type="number" id="topFontSize" value="26" min="10" max="60" onchange="updateState('topFontSize', +this.value)"></div>
+                    </div>
+                    <div class="flex flex-wrap gap-3 mt-2">
+                        <label class="flex items-center gap-1 text-xs"><input type="checkbox" checked id="topBold" onchange="updateState('topBold', this.checked)"> Bold</label>
+                        <label class="flex items-center gap-1 text-xs"><input type="checkbox" id="topItalic" onchange="updateState('topItalic', this.checked)"> Italic</label>
+                        <label class="flex items-center gap-1 text-xs"><input type="checkbox" checked id="topUppercase" onchange="updateState('topUppercase', this.checked)"> Uppercase</label>
+                    </div>
+                    <div class="mt-2"><label>Letter Spacing</label><input type="range" min="0" max="15" value="2" oninput="updateState('topLetterSpacing', +this.value)" id="topLetterSpacingSlider"></div>
+                </div>
+
+                <!-- Teks Tengah -->
+                <div class="card-panel">
+                    <h3><i class="bi bi-building"></i> Teks Tengah</h3>
+                    <input type="text" id="centerText" value="UPT SD NEGERI" oninput="updateState('centerText', this.value)" placeholder="Nama Instansi...">
+                    <div class="grid grid-cols-2 gap-2 mt-2">
+                        <div><label>Font</label><select id="centerFontFamily" onchange="updateState('centerFontFamily', this.value)">
+                                <option>Arial</option><option>Times New Roman</option><option>Calibri</option><option>Verdana</option><option>Tahoma</option><option selected>Poppins</option><option>Roboto</option>
+                        </select></div>
+                        <div><label>Ukuran</label><input type="number" id="centerFontSize" value="20" min="8" max="50" onchange="updateState('centerFontSize', +this.value)"></div>
+                    </div>
+                    <div class="flex flex-wrap gap-3 mt-2">
+                        <label class="flex items-center gap-1 text-xs"><input type="checkbox" checked id="centerBold" onchange="updateState('centerBold', this.checked)"> Bold</label>
+                    </div>
+                    <div class="mt-2"><label>Posisi Vertikal</label><input type="range" min="-80" max="80" value="0" oninput="updateState('centerVerticalPos', +this.value)" id="centerVerticalPosSlider"></div>
+                </div>
+
+                <!-- Teks Bawah -->
+                <div class="card-panel">
+                    <h3><i class="bi bi-text-indent-right"></i> Teks Bawah (Melengkung)</h3>
+                    <input type="text" id="bottomText" value="MEDAN" oninput="updateState('bottomText', this.value)" placeholder="Teks Bawah...">
+                    <div class="grid grid-cols-2 gap-2 mt-2">
+                        <div><label>Font</label><select id="bottomFontFamily" onchange="updateState('bottomFontFamily', this.value)">
+                                <option>Arial</option><option>Times New Roman</option><option>Calibri</option><option>Verdana</option><option>Tahoma</option><option>Poppins</option><option>Roboto</option>
+                        </select></div>
+                        <div><label>Ukuran</label><input type="number" id="bottomFontSize" value="22" min="8" max="50" onchange="updateState('bottomFontSize', +this.value)"></div>
+                    </div>
+                    <div class="mt-2"><label>Spacing</label><input type="range" min="0" max="12" value="2" oninput="updateState('bottomSpacing', +this.value)" id="bottomSpacingSlider"></div>
+                </div>
+
+                <!-- Nomor Stempel -->
+                <div class="card-panel">
+                    <h3><i class="bi bi-hash"></i> Nomor Stempel</h3>
+                    <div class="flex items-center gap-2 mb-2">
+                        <label class="flex items-center gap-1 text-xs"><input type="checkbox" checked id="showNumber" onchange="updateState('showNumber', this.checked)"> Tampilkan</label>
+                    </div>
+                    <input type="text" id="numberText" value="001/UPT-SD/2025" oninput="updateState('numberText', this.value)" placeholder="Nomor...">
+                    <div class="mt-2"><label>Ukuran Font</label><input type="range" min="6" max="24" value="11" oninput="updateState('numberFontSize', +this.value)" id="numberFontSizeSlider"></div>
+                </div>
+
+                <!-- Logo -->
+                <div class="card-panel">
+                    <h3><i class="bi bi-image"></i> Logo</h3>
+                    <div class="drop-zone" id="dropZone" onclick="document.getElementById('logoFileInput').click()">
+                        <i class="bi bi-cloud-upload text-2xl" style="color:var(--text-muted);"></i>
+                        <p class="text-xs mt-1" style="color:var(--text-muted);">Klik atau Drag & Drop Logo</p>
+                        <p class="text-xs" style="color:var(--text-muted);">PNG, JPG, SVG</p>
+                    </div>
+                    <input type="file" id="logoFileInput" accept="image/png,image/jpeg,image/svg+xml" style="display:none;" onchange="handleLogoUpload(event)">
+                    <div class="grid grid-cols-2 gap-2 mt-2">
+                        <div><label>Ukuran Logo</label><input type="range" min="20" max="200" value="60" oninput="updateState('logoSize', +this.value)" id="logoSizeSlider"></div>
+                        <div><label>Rotasi</label><input type="range" min="-180" max="180" value="0" oninput="updateState('logoRotation', +this.value)" id="logoRotationSlider"></div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 mt-2">
+                        <div><label>Posisi X</label><input type="range" min="-100" max="100" value="0" oninput="updateState('logoX', +this.value)" id="logoXSlider"></div>
+                        <div><label>Posisi Y</label><input type="range" min="-100" max="100" value="0" oninput="updateState('logoY', +this.value)" id="logoYSlider"></div>
+                    </div>
+                    <div class="mt-2"><label>Transparansi</label><input type="range" min="0.1" max="1" step="0.05" value="1" oninput="updateState('logoOpacity', +this.value)" id="logoOpacitySlider"></div>
+                    <button class="btn-outline btn-sm mt-2 w-full" onclick="removeLogo()"><i class="bi bi-trash"></i> Hapus Logo</button>
+                </div>
+
+                <!-- Garis Horizontal -->
+                <div class="card-panel">
+                    <h3><i class="bi bi-dash-lg"></i> Garis Horizontal</h3>
+                    <div id="linesContainer" class="space-y-2 max-h-[28rem] overflow-y-auto"></div>
+                    <button class="btn-accent btn-sm mt-2 w-full" onclick="addHorizontalLine()">+ Tambah Garis</button>
+                </div>
+
+                <!-- Ornamen -->
+                <div class="card-panel">
+                    <h3><i class="bi bi-star"></i> Ornamen</h3>
+                    <select id="ornamentType" onchange="updateState('ornamentType', this.value)">
+                        <option value="none">Tidak Ada</option>
+                        <option value="stars">⭐ Bintang</option>
+                        <option value="dots">🔵 Titik</option>
+                        <option value="circles">⭕ Lingkaran Kecil</option>
+                        <option value="dashes">➖ Garis Putus-putus</option>
+                    </select>
+                    <div class="grid grid-cols-2 gap-2 mt-2">
+                        <div><label>Jumlah</label><input type="number" id="ornamentCount" value="5" min="1" max="20" onchange="updateState('ornamentCount', +this.value)"></div>
+                        <div><label>Ukuran</label><input type="range" min="3" max="20" value="6" oninput="updateState('ornamentSize', +this.value)" id="ornamentSizeSlider"></div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 mt-2">
+                        <div>
+                            <label class="flex justify-between gap-2">
+                                <span>Jarak dari pusat</span>
+                                <span class="text-xs" style="color:var(--accent);" id="ornamentRadiusValue">72%</span>
+                            </label>
+                            <input type="range" min="55" max="88" value="72" oninput="updateState('ornamentRadius', +this.value)" id="ornamentRadiusSlider">
+                        </div>
+                        <div>
+                            <label class="flex justify-between gap-2">
+                                <span>Jarak antar ornamen</span>
+                                <span class="text-xs" style="color:var(--accent);" id="ornamentSpacingValue">0px</span>
+                            </label>
+                            <input type="range" min="0" max="60" value="0" oninput="updateState('ornamentSpacing', +this.value)" id="ornamentSpacingSlider">
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <label>Rotasi posisi ornamen</label>
+                        <input type="range" min="-180" max="180" value="0" oninput="updateState('ornamentRotation', +this.value)" id="ornamentRotationSlider">
+                        <span class="text-xs" style="color:var(--text-muted);" id="ornamentRotationValue">0°</span>
+                    </div>
+                </div>
+
+                <!-- Rotasi -->
+                <div class="card-panel">
+                    <h3><i class="bi bi-arrow-clockwise"></i> Rotasi</h3>
+                    <label>Rotasi Keseluruhan</label>
+                    <input type="range" min="-180" max="180" value="0" oninput="updateState('rotation', +this.value)" id="rotationSlider">
+                    <span class="text-xs" style="color:var(--text-muted);" id="rotationValue">0°</span>
+                </div>
+
+                <!-- Zoom -->
+                <div class="card-panel">
+                    <h3><i class="bi bi-zoom-in"></i> Zoom Preview</h3>
+                    <div class="flex gap-1 flex-wrap">
+                        <button class="btn-outline btn-sm" onclick="setZoom(0.5)">50%</button>
+                        <button class="btn-outline btn-sm" onclick="setZoom(0.75)">75%</button>
+                        <button class="btn-outline btn-sm active-zoom" onclick="setZoom(1)" id="zoom100">100%</button>
+                        <button class="btn-outline btn-sm" onclick="setZoom(1.5)">150%</button>
+                        <button class="btn-outline btn-sm" onclick="setZoom(2)">200%</button>
+                    </div>
+                </div>
+
+                <!-- Export -->
+                <div class="card-panel">
+                    <h3><i class="bi bi-download"></i> Export</h3>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button class="btn-accent btn-sm" onclick="exportPNG(300)">PNG 300px</button>
+                        <button class="btn-accent btn-sm" onclick="exportPNG(600)">PNG 600px</button>
+                        <button class="btn-accent btn-sm" onclick="exportPNG(1200)">PNG 1200px</button>
+                        <button class="btn-accent btn-sm" onclick="exportPNG(0)">PNG Custom</button>
+                        <button class="btn-outline btn-sm" onclick="exportSVG()">SVG</button>
+                        <button class="btn-outline btn-sm" onclick="copyToClipboard()">Copy PNG</button>
+                        <button class="btn-outline btn-sm" onclick="exportTemplate()">Export JSON</button>
+                        <button class="btn-outline btn-sm" onclick="document.getElementById('importFileInput').click()">Import JSON</button>
+                    </div>
+                    <input type="file" id="importFileInput" accept=".json" style="display:none;" onchange="importTemplate(event)">
+                </div>
+            </div>
+        </aside>
+
+        <!-- Canvas Area -->
+        <div class="canvas-area" id="canvasArea">
+            <div class="canvas-wrapper" id="canvasWrapper">
+                <canvas id="stampCanvas" width="500" height="500"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay for mobile -->
+    <div id="overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:34;"
+    onclick="closeSidebar()"></div>
+
+    <script>
+        // ==================== STATE MANAGEMENT ====================
+        const defaultState = {
+            shape: 'circle',
+            width: 400,
+            height: 400,
+            borderThickness: 4,
+            cornerRadius: 25,
+            outerBorderColor: '#cc0000',
+            innerBorderColor: '#cc0000',
+            textColor: '#cc0000',
+            logoColor: '#cc0000',
+            bgColor: '#ffffff',
+            edges: [
+                { thickness: 4, color: '#cc0000', spacing: 0 },
+                { thickness: 1.5, color: '#cc0000', spacing: 6 },
+            ],
+            borderGap: 6,
+            innerBorderThickness: 1.5,
+            topText: 'PEMERINTAH KOTA',
+            topFontFamily: 'Arial',
+            topFontSize: 26,
+            topBold: true,
+            topItalic: false,
+            topUppercase: true,
+            topLetterSpacing: 2,
+            centerText: 'UPT SD NEGERI',
+            centerFontFamily: 'Poppins',
+            centerFontSize: 20,
+            centerBold: true,
+            centerColor: '#cc0000',
+            centerVerticalPos: 0,
+            bottomText: 'MEDAN',
+            bottomFontFamily: 'Arial',
+            bottomFontSize: 22,
+            bottomSpacing: 2,
+            bottomBold: true,
+            numberText: '001/UPT-SD/2025',
+            showNumber: true,
+            numberFontSize: 11,
+            logo: null,
+            logoSize: 60,
+            logoX: 0,
+            logoY: 0,
+            logoRotation: 0,
+            logoOpacity: 1,
+            lines: [],
+            ornamentType: 'none',
+            ornamentCount: 5,
+            ornamentSize: 6,
+            ornamentRotation: 0,
+            ornamentRadius: 72,
+            ornamentSpacing: 0,
+            rotation: 0,
+            zoom: 1,
+        };
+
+        let state = JSON.parse(JSON.stringify(defaultState));
+        let history = [];
+        let future = [];
+        const MAX_HISTORY = 50;
+
+        function saveState() {
+            history.push(JSON.parse(JSON.stringify(state)));
+            if (history.length > MAX_HISTORY) history.shift();
+            future = [];
+            saveToLocalStorage();
+        }
+
+        function undo() {
+            if (history.length === 0) return;
+            future.push(JSON.parse(JSON.stringify(state)));
+            state = history.pop();
+            syncUIFromState();
+            renderCanvas();
+            saveToLocalStorage();
+            showToast('↩ Undo berhasil');
+        }
+
+        function redo() {
+            if (future.length === 0) return;
+            history.push(JSON.parse(JSON.stringify(state)));
+            state = future.pop();
+            syncUIFromState();
+            renderCanvas();
+            saveToLocalStorage();
+            showToast('↪ Redo berhasil');
+        }
+
+        function updateState(key, value) {
+            saveState();
+            state[key] = value;
+            if (key === 'rotation') {
+                document.getElementById('rotationValue').textContent = value + '°';
+            }
+            if (key === 'ornamentRotation') {
+                document.getElementById('ornamentRotationValue').textContent = value + '°';
+            }
+            if (key === 'ornamentRadius') {
+                document.getElementById('ornamentRadiusValue').textContent = value + '%';
+            }
+            if (key === 'ornamentSpacing') {
+                document.getElementById('ornamentSpacingValue').textContent = value + 'px';
+            }
+            if (key === 'outerBorderColor' && state.edges && state.edges[0]) {
+                state.edges[0].color = value;
+            }
+            if (key === 'innerBorderColor' && state.edges && state.edges[1]) {
+                state.edges[1].color = value;
+            }
+            if (key === 'borderThickness' && state.edges && state.edges[0]) {
+                state.edges[0].thickness = value;
+                renderEdgesUI();
+            }
+            renderCanvas();
+            saveToLocalStorage();
+        }
+
+        // ==================== LOCAL STORAGE ====================
+        function saveToLocalStorage() {
+            try {
+                localStorage.setItem('stampGeneratorState', JSON.stringify(state));
+            } catch (e) { /* quota exceeded */ }
+        }
+
+        function loadFromLocalStorage() {
+            try {
+                const saved = localStorage.getItem('stampGeneratorState');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    state = { ...defaultState, ...parsed };
+                    if (!state.lines) state.lines = [];
+                    else {
+                        state.lines = normalizeLines(state.lines);
+                        recalcLinesFromSpacing(1);
+                    }
+                    state.edges = migrateBordersToEdges(state);
+                }
+            } catch (e) {
+                state = JSON.parse(JSON.stringify(defaultState));
+            }
+        }
+
+        // ==================== CANVAS RENDERING ====================
+        const canvas = document.getElementById('stampCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function getBaseCanvasSize(st) {
+            return Math.max(st.width, st.height) + 120;
+        }
+
+        function drawStamp(targetCtx, st, baseSize) {
+            const halfW = st.width / 2;
+            const halfH = st.height / 2;
+
+            targetCtx.clearRect(0, 0, baseSize, baseSize);
+            targetCtx.save();
+            targetCtx.translate(baseSize / 2, baseSize / 2);
+            targetCtx.rotate((st.rotation * Math.PI) / 180);
+
+            targetCtx.fillStyle = st.bgColor;
+            drawShapePath(targetCtx, 0, 0, halfW, halfH, st.shape, st.cornerRadius);
+            targetCtx.fill();
+
+            drawEdgeRings(targetCtx, halfW, halfH, st);
+
+            if (st.logo && st.logo.img) {
+                targetCtx.save();
+                targetCtx.globalAlpha = st.logoOpacity;
+                targetCtx.translate(st.logoX, st.logoY);
+                targetCtx.rotate((st.logoRotation * Math.PI) / 180);
+                const ls = st.logoSize;
+                targetCtx.drawImage(st.logo.img, -ls / 2, -ls / 2, ls, ls);
+                targetCtx.restore();
+            }
+
+            if (st.topText.trim()) drawCurvedText(targetCtx, st.topText, halfW, halfH, st.shape, 'top', st);
+            if (st.centerText.trim()) drawCenterText(targetCtx, st.centerText, st.centerVerticalPos, st);
+            if (st.bottomText.trim()) drawCurvedText(targetCtx, st.bottomText, halfW, halfH, st.shape, 'bottom', st);
+            if (st.showNumber && st.numberText.trim()) drawNumberText(targetCtx, st.numberText, halfW, halfH, st);
+            st.lines.forEach((line, i) => drawHorizontalLine(targetCtx, line, halfW, getLineDrawY(i)));
+            if (st.ornamentType !== 'none') drawOrnaments(targetCtx, halfW, halfH, st);
+
+            targetCtx.restore();
+        }
+
+        function renderCanvas() {
+            const baseSize = getBaseCanvasSize(state);
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+            canvas.width = Math.round(baseSize * dpr);
+            canvas.height = Math.round(baseSize * dpr);
+            canvas.style.width = (baseSize * state.zoom) + 'px';
+            canvas.style.height = (baseSize * state.zoom) + 'px';
+
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            drawStamp(ctx, state, baseSize);
+        }
+
+        function drawShapePath(ctx, cx, cy, hw, hh, shape, cr) {
+            ctx.beginPath();
+            switch (shape) {
+                case 'circle':
+                    const r = Math.min(hw, hh);
+                    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+                    break;
+                case 'oval-h':
+                    ctx.ellipse(cx, cy, hw, hh, 0, 0, Math.PI * 2);
+                    break;
+                case 'oval-v':
+                    ctx.ellipse(cx, cy, hh, hw, 0, 0, Math.PI * 2);
+                    break;
+                case 'rect':
+                    ctx.rect(cx - hw, cy - hh, hw * 2, hh * 2);
+                    break;
+                case 'rect-wide':
+                    ctx.rect(cx - hw, cy - hh * 0.65, hw * 2, hh * 1.3);
+                    break;
+                case 'roundrect':
+                    const rr = Math.min(cr, hw, hh);
+                    roundRect(ctx, cx - hw, cy - hh, hw * 2, hh * 2, rr);
+                    break;
+                case 'triangle':
+                    ctx.moveTo(cx, cy - hh);
+                    ctx.lineTo(cx + hw, cy + hh);
+                    ctx.lineTo(cx - hw, cy + hh);
+                    ctx.closePath();
+                    break;
+                case 'hexagon':
+                    const sides = 6;
+                    const rad = Math.min(hw, hh);
+                    for (let i = 0; i < sides; i++) {
+                        const angle = (Math.PI * 2 / sides) * i - Math.PI / 2;
+                        const x = cx + rad * Math.cos(angle);
+                        const y = cy + rad * Math.sin(angle);
+                        if (i === 0) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+                    }
+                    ctx.closePath();
+                    break;
+                default:
+                    ctx.arc(cx, cy, Math.min(hw, hh), 0, Math.PI * 2);
+            }
+        }
+
+        function roundRect(ctx, x, y, w, h, r) {
+            ctx.beginPath();
+            ctx.moveTo(x + r, y);
+            ctx.lineTo(x + w - r, y);
+            ctx.arcTo(x + w, y, x + w, y + r, r);
+            ctx.lineTo(x + w, y + h - r);
+            ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+            ctx.lineTo(x + r, y + h);
+            ctx.arcTo(x, y + h, x, y + h - r, r);
+            ctx.lineTo(x, y + r);
+            ctx.arcTo(x, y, x + r, y, r);
+            ctx.closePath();
+        }
+
+        function drawBorder(ctx, cx, cy, hw, hh, shape, cr, thickness, color) {
+            ctx.save();
+            ctx.strokeStyle = color;
+            ctx.lineWidth = thickness;
+            drawShapePath(ctx, cx, cy, hw, hh, shape, cr);
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        function normalizeEdges(edges) {
+            if (!Array.isArray(edges)) return [];
+            return edges.map((edge, i) => ({
+                thickness: edge.thickness ?? 4,
+                color: edge.color || '#cc0000',
+                spacing: edge.spacing != null ? edge.spacing : (i === 0 ? 0 : 6),
+            }));
+        }
+
+        function migrateBordersToEdges(st) {
+            if (Array.isArray(st.edges) && st.edges.length > 0) {
+                return normalizeEdges(st.edges);
+            }
+
+            const edges = [];
+            const textColor = st.textColor || '#cc0000';
+
+            if (st.showOuterBorder !== false) {
+                edges.push({
+                    thickness: st.borderThickness || 4,
+                    color: st.outerBorderColor || textColor,
+                    spacing: 0,
+                });
+            }
+            if (st.showInnerBorder) {
+                edges.push({
+                    thickness: st.innerBorderThickness || 1.5,
+                    color: st.innerBorderColor || textColor,
+                    spacing: st.borderGap || 6,
+                });
+            }
+            if (st.showThirdBorder) {
+                edges.push({
+                    thickness: (st.innerBorderThickness || 1.5) * 0.7,
+                    color: st.innerBorderColor || textColor,
+                    spacing: st.borderGap || 6,
+                });
+            }
+            if (edges.length === 0) {
+                edges.push({ thickness: st.borderThickness || 4, color: textColor, spacing: 0 });
+            }
+            return normalizeEdges(edges);
+        }
+
+        function getEdgeDrawInset(edges, index) {
+            if (index <= 0) return 0;
+            let inset = 0;
+            for (let i = 0; i < index; i++) {
+                inset += edges[i].thickness || 2;
+            }
+            // spacing pada edges[i] = jarak sebelum garis tepi ke-i
+            for (let i = 1; i <= index; i++) {
+                inset += edges[i].spacing != null ? edges[i].spacing : 6;
+            }
+            return inset;
+        }
+
+        function drawEdgeRings(ctx, halfW, halfH, st) {
+            const edges = st.edges && st.edges.length ? st.edges : migrateBordersToEdges(st);
+            edges.forEach((edge, index) => {
+                const inset = getEdgeDrawInset(edges, index);
+                const hw = Math.max(1, halfW - inset);
+                const hh = Math.max(1, halfH - inset);
+                const cr = Math.max(0, st.cornerRadius - inset);
+                drawBorder(ctx, 0, 0, hw, hh, st.shape, cr, edge.thickness || 2, edge.color || st.textColor);
+            });
+        }
+
+        function drawCurvedText(ctx, text, halfW, halfH, shape, position, st) {
+            const isTop = position === 'top';
+            const radius = Math.min(halfW, halfH) * 0.78;
+
+            let processedText = text;
+            if (isTop && st.topUppercase) processedText = processedText.toUpperCase();
+
+            const fontFamily = isTop ? st.topFontFamily : st.bottomFontFamily;
+            const fontSize = isTop ? st.topFontSize : st.bottomFontSize;
+            const bold = isTop ? st.topBold : st.bottomBold;
+            const italic = isTop ? st.topItalic : false;
+            const letterSpacing = isTop ? st.topLetterSpacing : st.bottomSpacing;
+
+            let fontStr = '';
+            if (bold) fontStr += 'bold ';
+            if (italic) fontStr += 'italic ';
+            fontStr += fontSize + 'px ' + fontFamily + ', sans-serif';
+            ctx.save();
+            ctx.fillStyle = st.textColor;
+            ctx.font = fontStr;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            const chars = processedText.split('');
+            const totalWidth = chars.reduce((sum, ch) => sum + ctx.measureText(ch).width + letterSpacing, 0);
+            const totalAngle = Math.min(Math.PI * 1.45, totalWidth / radius);
+            const startAngle = isTop ? (-Math.PI / 2 - totalAngle / 2) : (Math.PI / 2 + totalAngle / 2);
+            const direction = isTop ? 1 : -1;
+
+            let currentAngle = startAngle;
+            for (let i = 0; i < chars.length; i++) {
+                const charWidth = ctx.measureText(chars[i]).width;
+                const charAngle = (charWidth + letterSpacing) / radius * direction;
+                const midAngle = currentAngle + charAngle / 2;
+                const x = Math.cos(midAngle) * radius;
+                const y = Math.sin(midAngle) * radius;
+                ctx.save();
+                ctx.translate(x, y);
+                const rotAngle = isTop ? (midAngle + Math.PI / 2) : (midAngle - Math.PI / 2);
+                ctx.rotate(rotAngle);
+                ctx.fillText(chars[i], 0, 0);
+                ctx.restore();
+                currentAngle += charAngle;
+            }
+            ctx.restore();
+        }
+
+        function drawCenterText(ctx, text, verticalOffset, st) {
+            ctx.save();
+            let fontStr = '';
+            if (st.centerBold) fontStr += 'bold ';
+            fontStr += st.centerFontSize + 'px ' + st.centerFontFamily + ', sans-serif';
+            ctx.fillStyle = st.centerColor || st.textColor;
+            ctx.font = fontStr;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            const lines = text.split('\n');
+            const lineHeight = st.centerFontSize * 1.3;
+            const totalHeight = lines.length * lineHeight;
+            const startY = verticalOffset - totalHeight / 2 + lineHeight / 2;
+
+            lines.forEach((line, i) => {
+                ctx.fillText(line.trim(), 0, startY + i * lineHeight);
+            });
+            ctx.restore();
+        }
+
+        function drawNumberText(ctx, text, halfW, halfH, st) {
+            ctx.save();
+            const fontSize = st.numberFontSize;
+            ctx.fillStyle = st.textColor;
+            ctx.font = fontSize + 'px Arial, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            const y = Math.min(halfW, halfH) * 0.65;
+            ctx.fillText(text, 0, y);
+            ctx.restore();
+        }
+
+        function drawHorizontalLine(ctx, line, halfW, drawY) {
+            ctx.save();
+            ctx.strokeStyle = line.color || '#cc0000';
+            ctx.lineWidth = line.thickness || 2;
+            if (line.style === 'dashed') ctx.setLineDash([8, 4]);
+            else if (line.style === 'dotted') ctx.setLineDash([2, 4]);
+            else ctx.setLineDash([]);
+            ctx.beginPath();
+            const l = (line.length || 140) / 2;
+            const y = drawY != null ? drawY : (line.y || 0);
+            ctx.moveTo(-l, y);
+            ctx.lineTo(l, y);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.restore();
+        }
+
+        function normalizeLines(lines) {
+            if (!Array.isArray(lines)) return [];
+            return lines.map((line, i) => ({
+                y: line.y ?? 0,
+                length: line.length ?? 140,
+                thickness: line.thickness ?? 2,
+                color: line.color || '#cc0000',
+                style: line.style || 'solid',
+                spacing: line.spacing != null ? line.spacing : (i === 0 ? 0 : 12),
+            }));
+        }
+
+        function getLineDrawY(index) {
+            const lines = state.lines;
+            const line = lines[index];
+            if (!line) return 0;
+            if (index === 0) return line.y ?? 0;
+            const prev = lines[index - 1];
+            const prevY = getLineDrawY(index - 1);
+            const gap = line.spacing != null ? line.spacing : 12;
+            return prevY + (prev.thickness || 2) / 2 + gap + (line.thickness || 2) / 2;
+        }
+
+        function syncLineYFromSpacing(index) {
+            if (index <= 0 || !state.lines[index]) return;
+            const prev = state.lines[index - 1];
+            const cur = state.lines[index];
+            const gap = cur.spacing != null ? cur.spacing : 12;
+            const prevY = getLineDrawY(index - 1);
+            cur.y = prevY + (prev.thickness || 2) / 2 + gap + (cur.thickness || 2) / 2;
+        }
+
+        function syncSpacingFromY(index) {
+            if (index <= 0 || !state.lines[index]) return;
+            const prev = state.lines[index - 1];
+            const cur = state.lines[index];
+            const prevY = getLineDrawY(index - 1);
+            const gap = (cur.y ?? 0) - prevY - (prev.thickness || 2) / 2 - (cur.thickness || 2) / 2;
+            cur.spacing = Math.max(0, Math.round(gap));
+        }
+
+        function recalcLinesFromSpacing(startIndex) {
+            for (let i = Math.max(1, startIndex); i < state.lines.length; i++) {
+                syncLineYFromSpacing(i);
+            }
+        }
+
+        function drawOrnaments(ctx, halfW, halfH, st) {
+            const count = Math.max(1, st.ornamentCount);
+            const size = st.ornamentSize;
+            const radiusPct = (st.ornamentRadius != null ? st.ornamentRadius : 72) / 100;
+            const radius = Math.min(halfW, halfH) * radiusPct;
+            const rotOffset = ((st.ornamentRotation || 0) * Math.PI) / 180;
+            const gapPx = st.ornamentSpacing || 0;
+            const angleStep = count > 0 ? (Math.PI * 2) / count + gapPx / Math.max(radius, 1) : 0;
+            ctx.save();
+            ctx.fillStyle = st.textColor;
+            ctx.strokeStyle = st.textColor;
+            ctx.lineWidth = 1;
+
+            for (let i = 0; i < count; i++) {
+                const angle = angleStep * i - Math.PI / 2 + rotOffset;
+                const x = Math.cos(angle) * radius;
+                const y = Math.sin(angle) * radius;
+
+                switch (st.ornamentType) {
+                    case 'stars':
+                        drawStar(ctx, x, y, size, angle + Math.PI / 2);
+                        break;
+                    case 'dots':
+                        ctx.beginPath();
+                        ctx.arc(x, y, size / 2, 0, Math.PI * 2);
+                        ctx.fill();
+                        break;
+                    case 'circles':
+                        ctx.beginPath();
+                        ctx.arc(x, y, size / 2, 0, Math.PI * 2);
+                        ctx.stroke();
+                        break;
+                    case 'dashes':
+                        ctx.save();
+                        ctx.translate(x, y);
+                        ctx.rotate(angle + Math.PI / 2);
+                        ctx.beginPath();
+                        ctx.moveTo(-size, 0);
+                        ctx.lineTo(size, 0);
+                        ctx.setLineDash([3, 2]);
+                        ctx.stroke();
+                        ctx.setLineDash([]);
+                        ctx.restore();
+                        break;
+                }
+            }
+            ctx.restore();
+        }
+
+        function drawStar(ctx, cx, cy, size, rotation = -Math.PI / 2) {
+            const spikes = 5;
+            const outerR = size;
+            const innerR = size * 0.4;
+            ctx.save();
+            ctx.translate(cx, cy);
+            ctx.rotate(rotation);
+            ctx.beginPath();
+            for (let i = 0; i < spikes * 2; i++) {
+                const r = i % 2 === 0 ? outerR : innerR;
+                const angle = (Math.PI * 2 / (spikes * 2)) * i - Math.PI / 2;
+                const x = r * Math.cos(angle);
+                const y = r * Math.sin(angle);
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+        }
+
+        // ==================== UI SYNC ====================
+        function syncUIFromState() {
+            const mapping = {
+                shapeSelect: 'shape',
+                widthInput: 'width',
+                heightInput: 'height',
+                borderThicknessSlider: 'borderThickness',
+                cornerRadiusSlider: 'cornerRadius',
+                outerBorderColor: 'outerBorderColor',
+                innerBorderColor: 'innerBorderColor',
+                textColor: 'textColor',
+                logoColor: 'logoColor',
+                bgColor: 'bgColor',
+                ornamentRadiusSlider: 'ornamentRadius',
+                ornamentSpacingSlider: 'ornamentSpacing',
+                topText: 'topText',
+                topFontFamily: 'topFontFamily',
+                topFontSize: 'topFontSize',
+                topBold: 'topBold',
+                topItalic: 'topItalic',
+                topUppercase: 'topUppercase',
+                topLetterSpacingSlider: 'topLetterSpacing',
+                centerText: 'centerText',
+                centerFontFamily: 'centerFontFamily',
+                centerFontSize: 'centerFontSize',
+                centerBold: 'centerBold',
+                centerVerticalPosSlider: 'centerVerticalPos',
+                bottomText: 'bottomText',
+                bottomFontFamily: 'bottomFontFamily',
+                bottomFontSize: 'bottomFontSize',
+                bottomSpacingSlider: 'bottomSpacing',
+                showNumber: 'showNumber',
+                numberText: 'numberText',
+                numberFontSizeSlider: 'numberFontSize',
+                logoSizeSlider: 'logoSize',
+                logoRotationSlider: 'logoRotation',
+                logoXSlider: 'logoX',
+                logoYSlider: 'logoY',
+                logoOpacitySlider: 'logoOpacity',
+                ornamentType: 'ornamentType',
+                ornamentCount: 'ornamentCount',
+                ornamentSizeSlider: 'ornamentSize',
+                ornamentRotationSlider: 'ornamentRotation',
+                rotationSlider: 'rotation',
+            };
+
+            for (const [elId, stateKey] of Object.entries(mapping)) {
+                const el = document.getElementById(elId);
+                if (!el) continue;
+                const val = state[stateKey];
+                if (el.type === 'checkbox') el.checked = val;
+                else if (el.type === 'range') el.value = val;
+                else if (el.tagName === 'SELECT') el.value = val;
+                else el.value = val;
+            }
+            document.getElementById('rotationValue').textContent = state.rotation + '°';
+            document.getElementById('ornamentRotationValue').textContent = (state.ornamentRotation || 0) + '°';
+            document.getElementById('ornamentRadiusValue').textContent = (state.ornamentRadius ?? 72) + '%';
+            document.getElementById('ornamentSpacingValue').textContent = (state.ornamentSpacing ?? 0) + 'px';
+            renderLinesUI();
+            renderEdgesUI();
+        }
+
+        const edgeDragSaved = {};
+
+        function renderEdgesUI() {
+            const container = document.getElementById('edgesContainer');
+            if (!container) return;
+            const edges = state.edges || [];
+
+            container.innerHTML = edges.map((edge, i) => `
+            <div class="text-xs p-3 rounded-lg space-y-2" style="background:var(--input-bg); border:1px solid var(--border);">
+              <div class="flex items-center justify-between gap-2">
+                <span class="font-semibold" style="color:var(--text);">Garis tepi ${i + 1}${i === 0 ? ' (luar)' : ''}</span>
+                <div class="flex gap-1">
+                  <input type="color" value="${edge.color || '#cc0000'}" class="w-7 h-7 p-0 border-0 rounded" title="Warna"
+                    onchange="commitEdge(${i},'color',this.value)">
+                  ${edges.length > 1 ? `<button class="btn-outline btn-sm px-2 py-1" onclick="removeEdgeRing(${i})" title="Hapus" style="color:#ef4444;border-color:#ef4444;"><i class="bi bi-trash"></i></button>` : ''}
+                </div>
+              </div>
+              ${i > 0 ? `
+              <div>
+                <label class="flex justify-between gap-2 mb-1">
+                  <span>Jarak dari garis sebelumnya</span>
+                  <span id="edgeGapLabel${i}" style="color:var(--accent);">${edge.spacing ?? 6}px</span>
+                </label>
+                <input type="range" class="w-full" min="0" max="60" value="${edge.spacing ?? 6}"
+                  oninput="previewEdge(${i},'spacing',+this.value); document.getElementById('edgeGapLabel${i}').textContent=this.value+'px'"
+                  onchange="commitEdge(${i},'spacing',+this.value)">
+              </div>
+              ` : ''}
+              <div>
+                <label class="flex justify-between gap-2 mb-1">
+                  <span>Ketebalan</span>
+                  <span id="edgeThickLabel${i}" style="color:var(--accent);">${edge.thickness ?? 4}px</span>
+                </label>
+                <input type="range" class="w-full" min="1" max="20" step="0.5" value="${edge.thickness ?? 4}"
+                  oninput="previewEdge(${i},'thickness',+this.value); document.getElementById('edgeThickLabel${i}').textContent=this.value+'px'"
+                  onchange="commitEdge(${i},'thickness',+this.value)">
+              </div>
+            </div>
+          `).join('');
+        }
+
+        function previewEdge(index, key, value) {
+            if (!state.edges[index]) return;
+            const dragId = 'edge-' + index + '-' + key;
+            if (!edgeDragSaved[dragId]) {
+                saveState();
+                edgeDragSaved[dragId] = true;
+            }
+            state.edges[index][key] = value;
+            if (index === 0 && key === 'thickness') state.borderThickness = value;
+            renderCanvas();
+        }
+
+        function commitEdge(index, key, value) {
+            if (!state.edges[index]) return;
+            const dragId = 'edge-' + index + '-' + key;
+            if (!edgeDragSaved[dragId]) saveState();
+            delete edgeDragSaved[dragId];
+            state.edges[index][key] = value;
+            if (index === 0) {
+                if (key === 'thickness') state.borderThickness = value;
+                if (key === 'color') state.outerBorderColor = value;
+            }
+            if (index === 1 && key === 'color') state.innerBorderColor = value;
+            renderEdgesUI();
+            renderCanvas();
+            saveToLocalStorage();
+        }
+
+        function addEdgeRing() {
+            saveState();
+            if (!state.edges) state.edges = [];
+            state.edges.push({
+                thickness: 1.5,
+                color: state.textColor,
+                spacing: 6,
+            });
+            renderEdgesUI();
+            renderCanvas();
+            saveToLocalStorage();
+            showToast('✅ Garis tepi ditambahkan');
+        }
+
+        function removeEdgeRing(index) {
+            if (!state.edges || state.edges.length <= 1) {
+                showToast('❌ Minimal harus ada 1 garis tepi', true);
+                return;
+            }
+            saveState();
+            state.edges.splice(index, 1);
+            renderEdgesUI();
+            renderCanvas();
+            saveToLocalStorage();
+        }
+
+        function getLineYRange() {
+            const limit = Math.max(40, Math.round(Math.min(state.width, state.height) / 2) - 10);
+            return { min: -limit, max: limit };
+        }
+
+        function renderLinesUI() {
+            const container = document.getElementById('linesContainer');
+            const yRange = getLineYRange();
+            const maxLength = Math.max(80, Math.min(500, state.width - 20));
+
+            container.innerHTML = state.lines.map((line, i) => `
+            <div class="text-xs p-3 rounded-lg space-y-2" style="background:var(--input-bg); border:1px solid var(--border);">
+              <div class="flex items-center justify-between gap-2">
+                <span class="font-semibold" style="color:var(--text);">Garis ${i + 1}</span>
+                <div class="flex gap-1">
+                  <input type="color" value="${line.color || '#cc0000'}" class="w-7 h-7 p-0 border-0 rounded" title="Warna" onchange="commitLine(${i},'color',this.value)">
+                  <button class="btn-outline btn-sm px-2 py-1" onclick="duplicateLine(${i})" title="Duplikat"><i class="bi bi-copy"></i></button>
+                  <button class="btn-outline btn-sm px-2 py-1" onclick="removeLine(${i})" title="Hapus" style="color:#ef4444;border-color:#ef4444;"><i class="bi bi-trash"></i></button>
+                </div>
+              </div>
+
+              <div>
+                <label class="flex justify-between gap-2 mb-1">
+                  <span>${i === 0 ? 'Posisi vertikal (patokan)' : 'Posisi vertikal'}</span>
+                  <span id="lineYLabel${i}" style="color:var(--accent);">${Math.round(getLineDrawY(i))}px</span>
+                </label>
+                <div class="flex items-center gap-1.5">
+                  <button type="button" class="btn-outline btn-sm px-2 py-1" onclick="nudgeLineY(${i}, -5)" title="Geser ke atas"><i class="bi bi-chevron-up"></i></button>
+                  <input type="range" class="flex-1" min="${yRange.min}" max="${yRange.max}" value="${Math.round(getLineDrawY(i))}"
+                    oninput="previewLineY(${i},+this.value); document.getElementById('lineYLabel${i}').textContent=Math.round(getLineDrawY(${i}))+'px'"
+                    onchange="commitLineY(${i},+this.value)">
+                  <button type="button" class="btn-outline btn-sm px-2 py-1" onclick="nudgeLineY(${i}, 5)" title="Geser ke bawah"><i class="bi bi-chevron-down"></i></button>
+                </div>
+              </div>
+
+              ${i > 0 ? `
+              <div>
+                <label class="flex justify-between gap-2 mb-1">
+                  <span>Jarak dari garis sebelumnya</span>
+                  <span id="lineGapLabel${i}" style="color:var(--accent);">${line.spacing ?? 12}px</span>
+                </label>
+                <input type="range" class="w-full" min="0" max="60" value="${line.spacing ?? 12}"
+                  oninput="previewLineSpacing(${i},+this.value); document.getElementById('lineGapLabel${i}').textContent=this.value+'px'"
+                  onchange="commitLineSpacing(${i},+this.value)">
+              </div>
+              ` : ''}
+
+              <div>
+                <label class="flex justify-between gap-2 mb-1">
+                  <span>Lebar garis</span>
+                  <span id="lineLenLabel${i}" style="color:var(--accent);">${line.length ?? 140}px</span>
+                </label>
+                <input type="range" class="w-full" min="20" max="${maxLength}" value="${line.length ?? 140}"
+                  oninput="previewLine(${i},'length',+this.value); document.getElementById('lineLenLabel${i}').textContent=this.value+'px'"
+                  onchange="commitLine(${i},'length',+this.value)">
+              </div>
+
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="block mb-1">Ketebalan</label>
+                  <input type="number" min="1" max="20" value="${line.thickness ?? 2}" class="!py-1.5"
+                    onchange="commitLine(${i},'thickness',+this.value)">
+                </div>
+                <div>
+                  <label class="block mb-1">Jenis</label>
+                  <select class="!py-1.5" onchange="commitLine(${i},'style',this.value)">
+                    <option value="solid" ${line.style === 'solid' ? 'selected' : ''}>Solid</option>
+                    <option value="dashed" ${line.style === 'dashed' ? 'selected' : ''}>Putus-putus</option>
+                    <option value="dotted" ${line.style === 'dotted' ? 'selected' : ''}>Titik</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          `).join('');
+        }
+
+        const lineDragSaved = {};
+
+        function previewLine(index, key, value) {
+            if (!state.lines[index]) return;
+            const dragId = index + '-' + key;
+            if (!lineDragSaved[dragId]) {
+                saveState();
+                lineDragSaved[dragId] = true;
+            }
+            state.lines[index][key] = value;
+            if (key === 'thickness') recalcLinesFromSpacing(index);
+            renderCanvas();
+        }
+
+        function commitLine(index, key, value) {
+            if (!state.lines[index]) return;
+            const dragId = index + '-' + key;
+            if (!lineDragSaved[dragId]) {
+                saveState();
+            }
+            delete lineDragSaved[dragId];
+            state.lines[index][key] = value;
+            if (key === 'thickness') recalcLinesFromSpacing(index);
+            renderLinesUI();
+            renderCanvas();
+            saveToLocalStorage();
+        }
+
+        function previewLineY(index, y) {
+            if (!state.lines[index]) return;
+            const dragId = index + '-y';
+            if (!lineDragSaved[dragId]) {
+                saveState();
+                lineDragSaved[dragId] = true;
+            }
+            state.lines[index].y = y;
+            if (index === 0) recalcLinesFromSpacing(1);
+            else syncSpacingFromY(index);
+            renderCanvas();
+        }
+
+        function commitLineY(index, y) {
+            if (!state.lines[index]) return;
+            const dragId = index + '-y';
+            if (!lineDragSaved[dragId]) saveState();
+            delete lineDragSaved[dragId];
+            state.lines[index].y = y;
+            if (index === 0) recalcLinesFromSpacing(1);
+            else syncSpacingFromY(index);
+            renderLinesUI();
+            renderCanvas();
+            saveToLocalStorage();
+        }
+
+        function previewLineSpacing(index, spacing) {
+            if (index <= 0 || !state.lines[index]) return;
+            const dragId = index + '-spacing';
+            if (!lineDragSaved[dragId]) {
+                saveState();
+                lineDragSaved[dragId] = true;
+            }
+            state.lines[index].spacing = spacing;
+            syncLineYFromSpacing(index);
+            recalcLinesFromSpacing(index + 1);
+            renderCanvas();
+        }
+
+        function commitLineSpacing(index, spacing) {
+            if (index <= 0 || !state.lines[index]) return;
+            const dragId = index + '-spacing';
+            if (!lineDragSaved[dragId]) saveState();
+            delete lineDragSaved[dragId];
+            state.lines[index].spacing = spacing;
+            syncLineYFromSpacing(index);
+            recalcLinesFromSpacing(index + 1);
+            renderLinesUI();
+            renderCanvas();
+            saveToLocalStorage();
+        }
+
+        function nudgeLineY(index, delta) {
+            if (!state.lines[index]) return;
+            const yRange = getLineYRange();
+            const nextY = Math.max(yRange.min, Math.min(yRange.max, Math.round(getLineDrawY(index)) + delta));
+            commitLineY(index, nextY);
+        }
+
+        function addHorizontalLine() {
+            saveState();
+            const isFirst = state.lines.length === 0;
+            const spacing = isFirst ? 0 : 16;
+            state.lines.push({
+                y: 0,
+                spacing,
+                length: 140,
+                thickness: 2,
+                color: state.textColor,
+                style: 'solid'
+            });
+            if (!isFirst) syncLineYFromSpacing(state.lines.length - 1);
+            renderLinesUI();
+            renderCanvas();
+            saveToLocalStorage();
+        }
+
+        function removeLine(index) {
+            saveState();
+            state.lines.splice(index, 1);
+            renderLinesUI();
+            renderCanvas();
+            saveToLocalStorage();
+        }
+
+        function duplicateLine(index) {
+            saveState();
+            const copy = JSON.parse(JSON.stringify(state.lines[index]));
+            if (index === 0) copy.spacing = copy.spacing != null ? copy.spacing : 12;
+            else if (copy.spacing == null) copy.spacing = 12;
+            state.lines.splice(index + 1, 0, copy);
+            recalcLinesFromSpacing(index + 1);
+            renderLinesUI();
+            renderCanvas();
+            saveToLocalStorage();
+        }
+
+        // ==================== LOGO HANDLING ====================
+        function handleLogoUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    saveState();
+                    state.logo = { img: img, src: e.target.result };
+                    renderCanvas();
+                    saveToLocalStorage();
+                    showToast('✅ Logo berhasil diupload!');
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+            event.target.value = '';
+        }
+
+        function removeLogo() {
+            saveState();
+            state.logo = null;
+            renderCanvas();
+            saveToLocalStorage();
+            showToast('🗑️ Logo dihapus');
+        }
+
+        // ==================== DRAG & DROP ====================
+        const dropZone = document.getElementById('dropZone');
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('drag-over');
+        });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const dt = new DataTransfer();
+                dt.items.add(file);
+                document.getElementById('logoFileInput').files = dt.files;
+                handleLogoUpload({ target: { files: dt.files } });
+            }
+        });
+
+        // ==================== EXPORT FUNCTIONS ====================
+        function exportPNG(resolution) {
+            let target = resolution;
+            if (target === 0) {
+                const input = prompt('Masukkan resolusi PNG (px):', '800');
+                if (!input) return;
+                target = Number(input);
+            }
+            if (!Number.isFinite(target) || target < 100) {
+                showToast('❌ Resolusi tidak valid!', true);
+                return;
+            }
+
+            const baseSize = getBaseCanvasSize(state);
+            const scale = target / baseSize;
+            const exportCanvas = document.createElement('canvas');
+            exportCanvas.width = Math.round(baseSize * scale);
+            exportCanvas.height = Math.round(baseSize * scale);
+            const exportCtx = exportCanvas.getContext('2d');
+            exportCtx.scale(scale, scale);
+            drawStamp(exportCtx, state, baseSize);
+
+            exportCanvas.toBlob((blob) => {
+                if (!blob) {
+                    showToast('❌ Gagal mengekspor PNG!', true);
+                    return;
+                }
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.download = 'stempel-' + target + 'px.png';
+                link.href = url;
+                link.click();
+                URL.revokeObjectURL(url);
+                showToast('✅ PNG ' + target + 'px berhasil diexport!');
+            }, 'image/png');
+        }
+
+        function exportSVG() {
+            const baseSize = getBaseCanvasSize(state);
+            const exportCanvas = document.createElement('canvas');
+            exportCanvas.width = baseSize;
+            exportCanvas.height = baseSize;
+            const exportCtx = exportCanvas.getContext('2d');
+            drawStamp(exportCtx, state, baseSize);
+            const pngDataUrl = exportCanvas.toDataURL('image/png');
+
+            const svg = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="${baseSize}" height="${baseSize}" viewBox="0 0 ${baseSize} ${baseSize}">
+  <image href="${pngDataUrl}" width="${baseSize}" height="${baseSize}" />
+</svg>`;
+            const blob = new Blob([svg], { type: 'image/svg+xml;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'stempel.svg';
+            link.click();
+            URL.revokeObjectURL(url);
+            showToast('✅ SVG berhasil diexport!');
+        }
+
+        function copyToClipboard() {
+            try {
+                const baseSize = getBaseCanvasSize(state);
+                const scale = 1.5;
+                const exportCanvas = document.createElement('canvas');
+                exportCanvas.width = Math.round(baseSize * scale);
+                exportCanvas.height = Math.round(baseSize * scale);
+                const exportCtx = exportCanvas.getContext('2d');
+                exportCtx.scale(scale, scale);
+                drawStamp(exportCtx, state, baseSize);
+
+                exportCanvas.toBlob(async (blob) => {
+                    if (!blob) throw new Error('Blob empty');
+                    if (navigator.clipboard && typeof ClipboardItem !== 'undefined') {
+                        await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+                        showToast('📋 Disalin ke clipboard!');
+                        return;
+                    }
+                    throw new Error('Clipboard image not supported');
+                }, 'image/png');
+            } catch (e) {
+                showToast('❌ Gagal menyalin. Coba export PNG.', true);
+            }
+        }
+
+        function exportTemplate() {
+            const exportData = { ...state };
+            if (exportData.logo && exportData.logo.src) {
+                exportData.logo = { src: exportData.logo.src };
+            } else {
+                exportData.logo = null;
+            }
+            const json = JSON.stringify(exportData, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const link = document.createElement('a');
+            link.download = 'template-stempel.json';
+            link.href = URL.createObjectURL(blob);
+            link.click();
+            showToast('💾 Template JSON berhasil diexport!');
+        }
+
+        function importTemplate(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    saveState();
+                    state = { ...defaultState, ...data };
+                    if (state.logo && state.logo.src && !state.logo.img) {
+                        const img = new Image();
+                        img.onload = function() {
+                            state.logo.img = img;
+                            syncUIFromState();
+                            renderCanvas();
+                            saveToLocalStorage();
+                        };
+                        img.src = state.logo.src;
+                    } else if (!state.logo || !state.logo.src) {
+                        state.logo = null;
+                    }
+                    if (!state.lines) state.lines = [];
+                    else {
+                        state.lines = normalizeLines(state.lines);
+                        recalcLinesFromSpacing(1);
+                    }
+                    state.edges = migrateBordersToEdges(state);
+                    syncUIFromState();
+                    renderCanvas();
+                    saveToLocalStorage();
+                    showToast('📥 Template berhasil diimport!');
+                } catch (err) {
+                    showToast('❌ File JSON tidak valid!', true);
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        // ==================== TEMPLATES ====================
+        function loadTemplate(type) {
+            if (!type) return;
+            const templates = {
+                pemerintah: {
+                    shape: 'circle',
+                    topText: 'PEMERINTAH KOTA',
+                    centerText: 'DINAS PENDIDIKAN',
+                    bottomText: 'JAKARTA',
+                    numberText: '001/DISDIK/2025',
+                    outerBorderColor: '#cc0000',
+                    innerBorderColor: '#cc0000',
+                    textColor: '#cc0000',
+                },
+                sekolah: {
+                    shape: 'circle',
+                    topText: 'DINAS PENDIDIKAN',
+                    centerText: 'SD NEGERI 01',
+                    bottomText: 'KECAMATAN',
+                    numberText: 'NPSN: 12345678',
+                    outerBorderColor: '#1a56db',
+                    innerBorderColor: '#1a56db',
+                    textColor: '#1a56db',
+                },
+                madrasah: {
+                    shape: 'circle',
+                    topText: 'KEMENTERIAN AGAMA',
+                    centerText: 'MADRASAH ALIYAH',
+                    bottomText: 'NEGERI 1',
+                    numberText: 'NSM: 13120001',
+                    outerBorderColor: '#059669',
+                    innerBorderColor: '#059669',
+                    textColor: '#059669',
+                },
+                kelurahan: {
+                    shape: 'circle',
+                    topText: 'PEMERINTAH KOTA',
+                    centerText: 'KELURAHAN',
+                    bottomText: 'SUKA MAJU',
+                    numberText: 'Kode: 12.34.56',
+                    outerBorderColor: '#cc0000',
+                    innerBorderColor: '#cc0000',
+                    textColor: '#cc0000',
+                },
+                desa: {
+                    shape: 'circle',
+                    topText: 'PEMERINTAH KABUPATEN',
+                    centerText: 'DESA SEJAHTERA',
+                    bottomText: 'KECAMATAN',
+                    numberText: 'Kode Desa: 001',
+                    outerBorderColor: '#7c3aed',
+                    innerBorderColor: '#7c3aed',
+                    textColor: '#7c3aed',
+                },
+                organisasi: {
+                    shape: 'circle',
+                    topText: 'ORGANISASI MASYARAKAT',
+                    centerText: 'KARANG TARUNA',
+                    bottomText: 'JAKARTA',
+                    numberText: 'SK: 001/ORG/2025',
+                    outerBorderColor: '#111111',
+                    innerBorderColor: '#111111',
+                    textColor: '#111111',
+                },
+                koperasi: {
+                    shape: 'roundrect',
+                    topText: 'KOPERASI',
+                    centerText: 'SEJAHTERA BERSAMA',
+                    bottomText: 'INDONESIA',
+                    numberText: 'No: 001/BH/2025',
+                    outerBorderColor: '#1a56db',
+                    innerBorderColor: '#1a56db',
+                    textColor: '#1a56db',
+                    cornerRadius: 30,
+                },
+                masjid: {
+                    shape: 'circle',
+                    topText: 'DEWAN KEMAKMURAN MASJID',
+                    centerText: 'AL-IKHLAS',
+                    bottomText: 'JAKARTA',
+                    numberText: 'No: 001/DKM/2025',
+                    outerBorderColor: '#059669',
+                    innerBorderColor: '#059669',
+                    textColor: '#059669',
+                },
+                perusahaan: {
+                    shape: 'rect-wide',
+                    topText: 'PT. MAJU BERSAMA',
+                    centerText: 'DIREKTUR UTAMA',
+                    bottomText: 'JAKARTA',
+                    numberText: 'SK: 001/SK-DIR/2025',
+                    outerBorderColor: '#111111',
+                    innerBorderColor: '#111111',
+                    textColor: '#111111',
+                    cornerRadius: 8,
+                },
+                klinik: {
+                    shape: 'circle',
+                    topText: 'KLINIK PRATAMA',
+                    centerText: 'SEHAT MANDIRI',
+                    bottomText: 'JAKARTA',
+                    numberText: 'No Izin: 001/KL/2025',
+                    outerBorderColor: '#059669',
+                    innerBorderColor: '#059669',
+                    textColor: '#059669',
+                },
+                notaris: {
+                    shape: 'circle',
+                    topText: 'NOTARIS & PPAT',
+                    centerText: 'NAMA NOTARIS, S.H.',
+                    bottomText: 'KOTA JAKARTA',
+                    numberText: 'SK: 001/SK/NOT/2025',
+                    outerBorderColor: '#111111',
+                    innerBorderColor: '#111111',
+                    textColor: '#111111',
+                },
+            };
+
+            const tmpl = templates[type];
+            if (tmpl) {
+                saveState();
+                state = { ...state, ...tmpl };
+                state.logo = null;
+                state.lines = [];
+                state.edges = migrateBordersToEdges(state);
+                if (state.edges[0]) {
+                    state.edges[0].color = tmpl.outerBorderColor || tmpl.textColor || state.edges[0].color;
+                }
+                if (state.edges[1]) {
+                    state.edges[1].color = tmpl.innerBorderColor || tmpl.textColor || state.edges[1].color;
+                }
+                syncUIFromState();
+                renderCanvas();
+                saveToLocalStorage();
+                showToast('📋 Template "' + type + '" dimuat!');
+            }
+            document.getElementById('templateSelect').value = '';
+        }
+
+        function resetAll() {
+            if (confirm('Reset semua pengaturan ke default?')) {
+                saveState();
+                state = JSON.parse(JSON.stringify(defaultState));
+                state.logo = null;
+                state.lines = [];
+                syncUIFromState();
+                renderCanvas();
+                saveToLocalStorage();
+                showToast('🔄 Pengaturan direset!');
+            }
+        }
+
+        function setPresetColor(color) {
+            saveState();
+            state.outerBorderColor = color;
+            state.innerBorderColor = color;
+            state.textColor = color;
+            state.logoColor = color;
+            state.centerColor = color;
+            if (state.edges) {
+                state.edges = state.edges.map((edge) => ({ ...edge, color }));
+            }
+            syncUIFromState();
+            renderCanvas();
+            saveToLocalStorage();
+            showToast('🎨 Warna preset diterapkan!');
+        }
+
+        // ==================== ZOOM ====================
+        function setZoom(zoomLevel) {
+            state.zoom = zoomLevel;
+            document.querySelectorAll('.active-zoom').forEach(b => b.classList.remove('active-zoom'));
+            const zoomBtns = document.querySelectorAll('.btn-outline');
+            zoomBtns.forEach(b => {
+                if (b.textContent.trim() === Math.round(zoomLevel * 100) + '%') b.classList.add(
+                'active-zoom');
+            });
+            renderCanvas();
+            saveToLocalStorage();
+        }
+
+        // ==================== DARK MODE ====================
+        function toggleDarkMode() {
+            document.body.classList.toggle('light');
+            const isLight = document.body.classList.contains('light');
+            localStorage.setItem('stampDarkMode', isLight ? 'light' : 'dark');
+            const icon = document.querySelector('.bi-moon-stars');
+            if (isLight) {
+                icon.classList.remove('bi-moon-stars');
+                icon.classList.add('bi-sun');
+            } else {
+                icon.classList.remove('bi-sun');
+                icon.classList.add('bi-moon-stars');
+            }
+        }
+
+        function loadDarkMode() {
+            const mode = localStorage.getItem('stampDarkMode');
+            if (mode === 'light') {
+                document.body.classList.add('light');
+                const icon = document.querySelector('.bi-moon-stars');
+                if (icon) {
+                    icon.classList.remove('bi-moon-stars');
+                    icon.classList.add('bi-sun');
+                }
+            }
+        }
+
+        // ==================== SIDEBAR TOGGLE ====================
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+            if (window.innerWidth <= 900) {
+                sidebar.classList.toggle('open');
+                document.getElementById('overlay').style.display = sidebar.classList.contains('open') ? 'block' :
+                    'none';
+            }
+        }
+
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.remove('open');
+            sidebar.classList.add('collapsed');
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        document.getElementById('mobileToggle').addEventListener('click', () => {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.remove('collapsed');
+            sidebar.classList.toggle('open');
+            document.getElementById('overlay').style.display = sidebar.classList.contains('open') ? 'block' : 'none';
+        });
+
+        document.getElementById('overlay').addEventListener('click', closeSidebar);
+
+        // ==================== TOAST ====================
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast ' + (isError ? 'error' : '') + ' show';
+            clearTimeout(toast._timeout);
+            toast._timeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2200);
+        }
+
+        // ==================== INITIALIZATION ====================
+        function init() {
+            loadDarkMode();
+            loadFromLocalStorage();
+            syncUIFromState();
+            renderLinesUI();
+            renderCanvas();
+            document.getElementById('rotationValue').textContent = state.rotation + '°';
+            document.getElementById('ornamentRotationValue').textContent = (state.ornamentRotation || 0) + '°';
+            document.getElementById('ornamentRadiusValue').textContent = (state.ornamentRadius ?? 72) + '%';
+            document.getElementById('ornamentSpacingValue').textContent = (state.ornamentSpacing ?? 0) + 'px';
+            state.edges = migrateBordersToEdges(state);
+            renderEdgesUI();
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+                    e.preventDefault();
+                    undo();
+                }
+                if ((e.ctrlKey || e.metaKey) && e.key === 'y') {
+                    e.preventDefault();
+                    redo();
+                }
+                if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'Z') {
+                    e.preventDefault();
+                    redo();
+                }
+                if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                    e.preventDefault();
+                    exportPNG(600);
+                }
+            });
+
+            console.log('✅ Generator Stempel Profesional siap digunakan!');
+            console.log('💡 Shortcuts: Ctrl+Z (Undo), Ctrl+Y (Redo), Ctrl+S (Export PNG 600px)');
+            console.log('📐 Fitur: 9 bentuk, teks melengkung, logo, garis, ornamen, template, export multi-resolusi');
+        }
+
+        init();
+
+        // Handle window resize for responsive
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 900) {
+                document.getElementById('overlay').style.display = 'none';
+                const sidebar = document.getElementById('sidebar');
+                sidebar.classList.remove('open');
+                if (sidebar.classList.contains('collapsed') && window.innerWidth > 900) {
+                    // keep collapsed state on desktop if user chose it
+                }
+            }
+        });
+    </script>
+</body>
+</html>
